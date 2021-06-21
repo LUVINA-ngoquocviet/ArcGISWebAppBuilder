@@ -1,0 +1,50 @@
+{
+  "selectionColor": "#00FFFF",
+  "selectionMode": "partial",
+  "enableByDefault": true,
+  "allowExport": true,
+  "includeRuntimeLayers": true,
+  "geometryTypes": [
+    "POINT",
+    "EXTENT",
+    "FREEHAND_POLYGON"
+  ],
+  "layerState": {
+    "Shinkansen_station_8055": {
+      "selected": true
+    },
+    "japan_Police_station_6633": {
+      "selected": true
+    },
+    "japan_fire_stations_1722": {
+      "selected": true
+    },
+    "japan_sea_ports_5608": {
+      "selected": true
+    },
+    "japan_airport_5616": {
+      "selected": true
+    },
+    "japan_roads_3591": {
+      "selected": true
+    },
+    "japan_all_stations_6491": {
+      "selected": true
+    },
+    "japan_railways_7158": {
+      "selected": true
+    },
+    "japan_ferry_lines_6285": {
+      "selected": true
+    },
+    "japan_lake_3707": {
+      "selected": true
+    },
+    "japan_ver83_4491": {
+      "selected": true
+    },
+    "japan_Prefectures_5051": {
+      "selected": true
+    }
+  }
+}

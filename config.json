@@ -174,12 +174,17 @@
       },
       {
         "position": {
-          "left": 50,
+          "right": 200,
           "top": 10,
           "relativeTo": "map"
         },
         "placeholderIndex": 1,
-        "id": "_32"
+        "id": "_32",
+        "name": "FilterMultipleSelectBox",
+        "version": "2.20",
+        "closeable": true,
+        "uri": "widgets/FilterMultipleSelectBox/Widget",
+        "config": "configs/FilterMultipleSelectBox/config__32.json"
       },
       {
         "position": {
@@ -193,15 +198,7 @@
         "version": "2.20",
         "closeable": true,
         "uri": "widgets/Print/Widget",
-        "config": {
-          "serviceURL": "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
-          "defaultTitle": "",
-          "defaultAuthor": "ArcGIS Web AppBuilder",
-          "defaultCopyright": "",
-          "defaultFormat": "PDF",
-          "defaultLayout": "Tabloid ANSI B Landscape",
-          "copyrightEditable": true
-        }
+        "config": "configs/Print/config__33.json"
       },
       {
         "position": {
@@ -215,56 +212,7 @@
         "version": "2.20",
         "closeable": true,
         "uri": "widgets/Select/Widget",
-        "config": {
-          "selectionColor": "#00FFFF",
-          "selectionMode": "partial",
-          "enableByDefault": true,
-          "allowExport": true,
-          "includeRuntimeLayers": true,
-          "geometryTypes": [
-            "POINT",
-            "EXTENT",
-            "FREEHAND_POLYGON"
-          ],
-          "layerState": {
-            "Shinkansen_station_8055": {
-              "selected": true
-            },
-            "japan_Police_station_6633": {
-              "selected": true
-            },
-            "japan_fire_stations_1722": {
-              "selected": true
-            },
-            "japan_sea_ports_5608": {
-              "selected": true
-            },
-            "japan_airport_5616": {
-              "selected": true
-            },
-            "japan_roads_3591": {
-              "selected": true
-            },
-            "japan_all_stations_6491": {
-              "selected": true
-            },
-            "japan_railways_7158": {
-              "selected": true
-            },
-            "japan_ferry_lines_6285": {
-              "selected": true
-            },
-            "japan_lake_3707": {
-              "selected": true
-            },
-            "japan_ver83_4491": {
-              "selected": true
-            },
-            "japan_Prefectures_5051": {
-              "selected": true
-            }
-          }
-        }
+        "config": "configs/Select/config__34.json"
       },
       {
         "position": {
@@ -285,14 +233,22 @@
           "top": 10,
           "relativeTo": "map"
         },
-        "placeholderIndex": 2,
+        "placeholderIndex": 1,
         "id": "_36"
       }
     ],
     "groups": [
       {
         "id": "dd_group_1",
-        "widgets": [],
+        "widgets": [
+          {
+            "name": "FilterSelectBox_Timezone",
+            "version": "2.20",
+            "uri": "widgets/FilterSelectBox_Timezone/Widget",
+            "config": "configs/FilterSelectBox_Timezone/config_widgets_FilterSelectBox_Timezone_Widget_37.json",
+            "id": "widgets_FilterSelectBox_Timezone_Widget_37"
+          }
+        ],
         "placeholderIndex": 1,
         "visible": true,
         "label": "Group 0"
@@ -300,21 +256,21 @@
       {
         "id": "dd_group_2",
         "widgets": [],
-        "placeholderIndex": 2,
+        "placeholderIndex": 1,
         "visible": true,
         "label": "Group 1"
       },
       {
         "id": "dd_group_4",
         "widgets": [],
-        "placeholderIndex": 3,
+        "placeholderIndex": 2,
         "visible": true,
         "label": "Group 3"
       },
       {
         "id": "dd_group_5",
         "widgets": [],
-        "placeholderIndex": 4,
+        "placeholderIndex": 3,
         "visible": true,
         "label": "Group 4"
       }
@@ -704,7 +660,7 @@
   "isWebTier": false,
   "httpProxy": {
     "useProxy": true,
-    "url": "/proxy.js"
+    "url": "https://asus-vietnq:3344/proxy.js"
   },
   "dataSource": {
     "dataSources": {},
