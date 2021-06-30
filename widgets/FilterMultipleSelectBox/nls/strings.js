@@ -6,6 +6,7 @@ define({
     showAll: "Show search results",
     more: "more",
     untitled: "Untitled",
+    filterPrefecture: "県",
   },
   "ja": true,
 });

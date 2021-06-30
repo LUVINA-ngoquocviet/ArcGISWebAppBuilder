@@ -174,7 +174,7 @@
       },
       {
         "position": {
-          "right": 200,
+          "right": 20,
           "top": 10,
           "relativeTo": "map"
         },
@@ -182,7 +182,6 @@
         "id": "_32",
         "name": "FilterMultipleSelectBox",
         "version": "2.20",
-        "closeable": true,
         "uri": "widgets/FilterMultipleSelectBox/Widget",
         "config": "configs/FilterMultipleSelectBox/config__32.json"
       },

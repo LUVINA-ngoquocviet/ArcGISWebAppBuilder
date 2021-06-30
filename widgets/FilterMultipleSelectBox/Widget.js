@@ -11,7 +11,7 @@ define([
   "esri/layers/FeatureLayer",
   // "esri/tasks/FeatureSet",
   // 'jimu/utils',
-  "esri/tasks/Query",
+  "esri/tasks/query",
   "dojo/store/Memory",
   "dojo/data/ObjectStore",
   "dojo/on",
@@ -62,7 +62,7 @@ define([
       var self = this;
 
       // Initialization
-      common._initKengen();
+      // common._initKengen();
       // common._eventHandlerPrefecture();
 
       // Create select box
@@ -246,6 +246,7 @@ define([
         store: new ObjectStore({
           objectStore: new Memory({ data: new Array(empty) }),
         }),
+        style: "width: 200px;",
         sortByLabel: false,
         onChange: function (state) {
           console.log("call shiten onchange :" + state);

@@ -101,7 +101,7 @@ define([
         onChange: function (state) {
           common.area_time_select = state;
           self._filter(self);
-          common._evendHandlerNimotsu();
+          common._eventHandlerNimotsu();
         },
       })
         .placeAt(self.searchNode_timezone)
@@ -113,7 +113,7 @@ define([
       var shitenTimeLabel = document.getElementById("shitenTimeLabel");
       //...
       self._filter(self);
-      common._evendHandlerNimotsu();
+      common._eventHandlerNimotsu();
     },
 
     _filter: function (self) {
