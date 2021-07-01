@@ -1,0 +1,45 @@
+.summary-table .table {
+  width: auto;
+}
+.jimu-simple-table {
+  width: 300px;
+  min-height: 300px;
+}
+.js-tabs ul.tab_menu{
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+.js-tabs ul.tab_menu li{
+  display: inline;
+  background: #666;
+  margin: 0px;
+  padding: 2px;
+}
+.js-tabs ul.tab_menu li a{
+  padding: 1px;
+}
+.js-tabs ul.tab_menu li a:link,
+.js-tabs ul.tab_menu li a:visited{
+  background-color: #666;
+  color: #fff;
+}
+.js-tabs ul.tab_menu li a.active:link,
+.js-tabs ul.tab_menu li a.active:visited{
+  background-color: #008000;
+  color: #fff;
+}
+.js-tabs ul.tab_menu li a:hover{
+  background-color: #333;
+  color: #f0f;
+}
+.tab_content{
+  background-color: #fff;
+  position: relative;
+  height: 400px;
+}
+.tab_content div.page{
+  width: 450px;
+  height: auto;
+  position: absolute;
+}
