@@ -66,7 +66,7 @@ define([
       // common._initKengen();
       // common._eventHandlerPrefecture();
 
-      
+       
       //Get all layers
       this.opLayers = this.map.itemInfo.itemData.operationalLayers;
 
