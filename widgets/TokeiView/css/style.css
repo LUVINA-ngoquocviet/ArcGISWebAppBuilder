@@ -1,0 +1,18 @@
+.dijitSelect {
+  margin: 0px;
+}
+.jimu-widget-search-selectbox {
+  min-height: 32px;
+  background: white;
+  /* padding: 5px !important; */
+  padding: 0% !important;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+.tokeiStyle {
+  font-size: 200%;
+  display: block;
+  text-align: center;
+  position: relative;
+  top: 5%;
+}

@@ -90,14 +90,14 @@ define([
 
     _createSelect: function (self) {
       var timezoneArray = [
-        { value: 1, label: "1", selected: true },
-        { value: 2, label: "22" },
-        { value: 3, label: "333" },
+        { value: 1, label: "1便（～12：59）", selected: true },
+        { value: 2, label: "2便（13：00～17：59）" },
+        { value: 3, label: "3便（18：00～）" },
       ];
       new Select({
         id: "NimotsuShousai_timezoneSelect",
         options: timezoneArray,
-        disabled: true,
+        disabled: false,
         onChange: function (state) {
           common.area_time_select = state;
           self._filter(self);
@@ -106,7 +106,29 @@ define([
       })
         .placeAt(self.searchNode_timezone)
         .startup();
-      //....
+
+      var itemTypeArray = [
+        { value: "00", label: "全体", selected: true },
+        { value: "06", label: "クール（冷蔵）" },
+        { value: "07", label: "クール（冷凍）" },
+        { value: "26", label: "ネコポス" },
+        { value: "18", label: "アマゾン" },
+        { value: "83", label: "ネコポス除外" },
+        { value: "82", label: "アマゾン除外" },
+        { value: "84", label: "ネコポス・アマゾン除外" },
+      ];
+      new Select({
+        id: "NimotsuShousai_itemSelect",
+        options: itemTypeArray,
+        disabled: false,
+        onChange: function (state) {
+          common.area_item_select = state;
+          self._filter(self);
+          common._eventHandlerNimotsu();
+        },
+      })
+        .placeAt(self.searchNode_itemtype)
+        .startup();
     },
 
     _jigyoshoFilterEvent: function (self) {

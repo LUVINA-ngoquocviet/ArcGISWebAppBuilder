@@ -174,7 +174,7 @@
       },
       {
         "position": {
-          "right": 20,
+          "right": 100,
           "top": 10,
           "relativeTo": "map"
         },
@@ -262,29 +262,46 @@
       },
       {
         "id": "dd_group_8",
-        "widgets": [],
+        "widgets": [
+          {
+            "name": "TokeiView",
+            "version": "2.20",
+            "uri": "widgets/TokeiView/Widget",
+            "config": "configs/TokeiView/config_widgets_TokeiView_Widget_39.json",
+            "id": "widgets_TokeiView_Widget_39"
+          }
+        ],
         "placeholderIndex": 2,
         "visible": true,
         "label": "Group 2"
       },
       {
         "id": "dd_group_2",
-        "widgets": [],
+        "widgets": [
+          {
+            "name": "TokeigaiView",
+            "version": "2.20",
+            "uri": "widgets/TokeigaiView/Widget",
+            "config": "configs/TokeigaiView/config_widgets_TokeigaiView_Widget_38.json",
+            "id": "widgets_TokeigaiView_Widget_38"
+          }
+        ],
         "placeholderIndex": 3,
         "visible": true,
-        "label": "Group 1"
+        "label": "Group 1",
+        "icon": "widgets/TokeigaiView/images/icon.png?wab_dv=2.20"
       },
       {
         "id": "dd_group_4",
         "widgets": [],
-        "placeholderIndex": 4,
+        "placeholderIndex": 2,
         "visible": true,
         "label": "Group 3"
       },
       {
         "id": "dd_group_5",
         "widgets": [],
-        "placeholderIndex": 5,
+        "placeholderIndex": 3,
         "visible": true,
         "label": "Group 4"
       }
