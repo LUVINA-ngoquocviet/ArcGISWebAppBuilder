@@ -273,7 +273,8 @@
         ],
         "placeholderIndex": 2,
         "visible": true,
-        "label": "Group 2"
+        "label": "Group 2",
+        "icon": "widgets/TokeiView/images/icon.png?wab_dv=2.20"
       },
       {
         "id": "dd_group_2",
@@ -293,7 +294,15 @@
       },
       {
         "id": "dd_group_4",
-        "widgets": [],
+        "widgets": [
+          {
+            "name": "Table",
+            "version": "2.20",
+            "uri": "widgets/Table/Widget",
+            "config": "configs/Table/config_widgets_Table_Widget_40.json",
+            "id": "widgets_Table_Widget_40"
+          }
+        ],
         "placeholderIndex": 2,
         "visible": true,
         "label": "Group 3"
@@ -301,7 +310,7 @@
       {
         "id": "dd_group_5",
         "widgets": [],
-        "placeholderIndex": 3,
+        "placeholderIndex": 2,
         "visible": true,
         "label": "Group 4"
       }
