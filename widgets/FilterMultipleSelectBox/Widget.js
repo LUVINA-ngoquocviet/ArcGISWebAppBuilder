@@ -66,7 +66,7 @@ define([
       // common._initKengen();
       // common._eventHandlerPrefecture();
 
-       
+
       //Get all layers
       this.opLayers = this.map.itemInfo.itemData.operationalLayers;
 
@@ -100,6 +100,8 @@ define([
 
       //Get data from layer
       var dataArr = [];
+      dataArr.push({ label: empty.label, value: "0", selected: true })
+
       layerFeature.queryFeatures(query).then(
         function (response) {
           response.features.forEach(function (feature) {
@@ -113,10 +115,13 @@ define([
         }
       );
 
+      //store holding data filter
+      var filterStore = new Memory({ data: dataArr, idProperty: "value" });
+
       //Create Select Box
       new Select({
         id: "prefecture",
-        options: dataArr,
+        options: filterStore.data,
         style: "width: 200px;",
         sortByLabel: false,
         onChange: function (state) {
