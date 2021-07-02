@@ -116,7 +116,7 @@ define([
       //Create Select Box
       new Select({
         id: "prefecture",
-        options: dataTest,
+        options: dataArr,
         style: "width: 200px;",
         sortByLabel: false,
         onChange: function (state) {
