@@ -305,11 +305,20 @@
         ],
         "placeholderIndex": 2,
         "visible": true,
-        "label": "Group 3"
+        "label": "Group 3",
+        "icon": "widgets/Table/images/icon.png?wab_dv=2.20"
       },
       {
         "id": "dd_group_5",
-        "widgets": [],
+        "widgets": [
+          {
+            "name": "TeijishukaTable",
+            "version": "2.20",
+            "uri": "widgets/TeijishukaTable/Widget",
+            "config": "configs/TeijishukaTable/config_widgets_TeijishukaTable_Widget_41.json",
+            "id": "widgets_TeijishukaTable_Widget_41"
+          }
+        ],
         "placeholderIndex": 2,
         "visible": true,
         "label": "Group 4"
