@@ -254,8 +254,24 @@
         "icon": "widgets/FilterSelectBox_Timezone/images/icon.png?wab_dv=2.20"
       },
       {
-        "id": "dd_group_6",
+        "id": "dd_group_9",
         "widgets": [],
+        "placeholderIndex": 1,
+        "visible": true,
+        "label": "Group 1"
+      },
+      {
+        "id": "dd_group_6",
+        "widgets": [
+          {
+            "name": "Infographic",
+            "label": "選択個数",
+            "version": "2.20",
+            "uri": "widgets/Infographic/Widget",
+            "config": "configs/Infographic/config_widgets_Infographic_Widget_42.json",
+            "id": "widgets_Infographic_Widget_42"
+          }
+        ],
         "placeholderIndex": 1,
         "visible": true,
         "label": "Group 1"
@@ -321,7 +337,8 @@
         ],
         "placeholderIndex": 2,
         "visible": true,
-        "label": "Group 4"
+        "label": "Group 4",
+        "icon": "widgets/TeijishukaTable/images/icon.png?wab_dv=2.20"
       }
     ],
     "panel": {
@@ -737,7 +754,7 @@
             "content": [
               {
                 "type": "column",
-                "width": 24.982602644398053,
+                "width": 21.433542101600555,
                 "reorderEnabled": true,
                 "title": "",
                 "isClosable": true,
@@ -747,37 +764,47 @@
                     "type": "stack",
                     "reorderEnabled": true,
                     "title": "",
-                    "height": 24.64355481231267,
+                    "height": 21.06506798847572,
                     "activeItemIndex": 0,
                     "isClosable": true,
                     "content": []
                   },
                   {
                     "type": "stack",
-                    "isClosable": true,
                     "reorderEnabled": true,
                     "title": "",
-                    "id": "dd_group_6",
-                    "height": 23.781030393881725,
-                    "content": [],
-                    "activeItemIndex": 0
+                    "id": "dd_group_9",
+                    "height": 21.93245314094237,
+                    "activeItemIndex": 0,
+                    "isClosable": true,
+                    "content": []
                   },
                   {
                     "type": "stack",
+                    "reorderEnabled": true,
+                    "title": "",
+                    "id": "dd_group_6",
+                    "height": 19.623813750786187,
+                    "activeItemIndex": 0,
                     "isClosable": true,
+                    "content": []
+                  },
+                  {
+                    "type": "stack",
                     "reorderEnabled": true,
                     "title": "",
                     "id": "dd_group_8",
-                    "height": 24.414920966645102,
-                    "content": [],
-                    "activeItemIndex": 0
+                    "height": 19.49651303590673,
+                    "activeItemIndex": 0,
+                    "isClosable": true,
+                    "content": []
                   },
                   {
                     "id": "dd_group_2",
                     "type": "stack",
                     "reorderEnabled": true,
                     "title": "",
-                    "height": 27.160493827160494,
+                    "height": 17.882152083888975,
                     "activeItemIndex": 0,
                     "isClosable": true,
                     "content": []
@@ -786,7 +813,7 @@
               },
               {
                 "type": "column",
-                "width": 75.01739735560194,
+                "width": 78.56645789839945,
                 "reorderEnabled": true,
                 "title": "",
                 "isClosable": true,

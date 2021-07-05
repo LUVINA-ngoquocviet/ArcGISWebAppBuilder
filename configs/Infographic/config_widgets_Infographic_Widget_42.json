@@ -1,0 +1,149 @@
+{
+  "layout": {
+    "definition": [
+      {
+        "type": "stack",
+        "isClosable": true,
+        "reorderEnabled": true,
+        "title": "",
+        "height": 100,
+        "activeItemIndex": 0,
+        "content": [
+          {
+            "id": "8108179169417526-3",
+            "type": "component",
+            "componentName": "jimu grid",
+            "componentState": {
+              "id": "8108179169417526-3"
+            },
+            "isClosable": true,
+            "reorderEnabled": true,
+            "title": "jimu grid"
+          }
+        ]
+      }
+    ]
+  },
+  "dijits": [
+    {
+      "id": "8108179169417526-1",
+      "type": "text",
+      "visible": false,
+      "config": {
+        "background": {
+          "backgroundColor": "#FFF",
+          "alignment": {
+            "horizontal": "center",
+            "vertical": "middle"
+          },
+          "link": ""
+        },
+        "font": {
+          "font": {
+            "fontFamily": "Arial",
+            "bold": false,
+            "italic": false,
+            "underline": false
+          },
+          "fontSize": 16,
+          "textColor": "#282828"
+        },
+        "text": "TITLE OF THE INFOGRAPHIC"
+      }
+    },
+    {
+      "id": "8108179169417526-2",
+      "type": "image",
+      "visible": false,
+      "config": {
+        "background": {
+          "backgroundColor": "#FFF",
+          "alignment": {
+            "horizontal": "center",
+            "vertical": "middle"
+          },
+          "link": ""
+        }
+      }
+    },
+    {
+      "id": "8108179169417526-3",
+      "type": "number",
+      "visible": true,
+      "config": {
+        "indicators": [],
+        "background": {
+          "backgroundColor": "#c0c0c0",
+          "alignment": {
+            "horizontal": "center",
+            "vertical": "middle"
+          },
+          "link": ""
+        },
+        "font": {
+          "font": {
+            "fontFamily": "Arial",
+            "bold": false,
+            "italic": false,
+            "underline": false
+          },
+          "fontSize": 24,
+          "textColor": "#282828"
+        },
+        "dataFormat": {
+          "unit": "none",
+          "decimalPlaces": "0",
+          "digitSeparator": true,
+          "prefix": "",
+          "suffix": "個"
+        },
+        "statistics": [
+          {
+            "type": "value",
+            "config": {
+              "type": "stat",
+              "value": {
+                "type": "count"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "8108179169417526-4",
+      "type": "text",
+      "visible": false,
+      "config": {
+        "background": {
+          "backgroundColor": "#FFF",
+          "alignment": {
+            "horizontal": "center",
+            "vertical": "middle"
+          },
+          "link": ""
+        },
+        "font": {
+          "font": {
+            "fontFamily": "Arial",
+            "bold": false,
+            "italic": false,
+            "underline": false
+          },
+          "fontSize": 12,
+          "textColor": "#282828"
+        },
+        "text": "Description: additional information about this infographic."
+      }
+    }
+  ],
+  "name": "number",
+  "wid": "8108179169417526",
+  "dataSource": {
+    "dataSourceType": "DATA_SOURCE_FEATURE_LAYER_FROM_MAP",
+    "name": "japan_airport",
+    "layerId": "japan_airport_5616",
+    "useSelection": true,
+    "filterByExtent": false
+  }
+}
