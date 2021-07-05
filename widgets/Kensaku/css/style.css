@@ -1,0 +1,41 @@
+.dijitSelect {
+  margin: 3px;
+}
+.jimu-widget-search-selectbox {
+  min-height: 32px;
+  background: white;
+  padding: 5px !important;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+.select-btn {
+  background-color: #11b08e;
+  color: #ffffff;
+  cursor: pointer;
+  min-width: 70px;
+  padding:0 15px;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  -o-border-radius:5px;
+  -ms-border-radius:5px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 5px;
+}
+.close-td {
+  text-align: right;
+  width: 9px;
+}
+.close-btn {
+  cursor: pointer;
+  width: 8px;
+}
+.center {
+  text-align: center;
+}

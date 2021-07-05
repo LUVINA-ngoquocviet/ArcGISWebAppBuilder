@@ -1,0 +1,34 @@
+<div class="ShuhaiKuikiNode">
+	<b>${nls.shuhaikuiki_title}</b>
+	<div class="select-btn"
+	     data-dojo-attach-point="ShuhaiKuikiCouse"
+	     data-dojo-attach-event="onclick:showShuhaiKuikiCouse">${nls.btn_course}</div>
+	<div data-dojo-type="dijit/TooltipDialog" data-dojo-attach-point="settingsDialog" style="display: none;">
+		<div style="width: 400px;">
+			<table style="width: 400px;">
+        <tr>
+          <td><b>${nls.shuhaikuiki_title}</b></td>
+          <td class="close-td">
+            <div data-dojo-attach-event="onclick:closeShuhaiKuikiCouse" class="close-btn">×</div>
+          </td>
+        </tr>
+      </table>
+      <hr>
+      <table>
+        <tr>
+          <td style="width: 100px;"><b>${nls.filterTitle_yobipattern}</b></td>
+          <td colspan="3"><div data-dojo-attach-point="searchNode_ShuhaiKuikiCouse_pattern" class="search-node"></div></td>
+        </tr>
+        <tr>
+          <td><b>${nls.filterTitle_course}</b></td>
+          <td colspan="3"><div data-dojo-attach-point="searchNode_ShuhaiKuikiCouse_course" class="search-node"></div></td>
+        </tr>
+      </table>
+		</div>
+    <input id="ShuhaiKuikiCouse_jigyosho" type="hidden" />
+    <div id="ShuhaiKuikiCouse_label_shiten">
+      支店が選択されるまで機能しません<br>
+      複数コース選択する場合は「ctrl」キーを押下しながら選択してください
+    </div>
+	</div>
+</div>

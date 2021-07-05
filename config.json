@@ -255,7 +255,15 @@
       },
       {
         "id": "dd_group_9",
-        "widgets": [],
+        "widgets": [
+          {
+            "name": "Kensaku",
+            "version": "2.20",
+            "uri": "widgets/Kensaku/Widget",
+            "config": "configs/Kensaku/config_widgets_Kensaku_Widget_43.json",
+            "id": "widgets_Kensaku_Widget_43"
+          }
+        ],
         "placeholderIndex": 1,
         "visible": true,
         "label": "Group 1"
@@ -274,7 +282,8 @@
         ],
         "placeholderIndex": 1,
         "visible": true,
-        "label": "Group 1"
+        "label": "Group 1",
+        "icon": "widgets/Infographic/images/icon.png?wab_dv=2.20"
       },
       {
         "id": "dd_group_8",

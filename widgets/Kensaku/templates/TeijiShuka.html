@@ -1,0 +1,52 @@
+<div class="TeijiShukaNode">
+	<b>${nls.teijishukasaki_title}</b>
+	<div class="select-btn"
+	     data-dojo-attach-point="TeijshukaKensaku"
+	     data-dojo-attach-event="onclick:showTeijshukaKensaku">${nls.btn_teijishukasaki}</div>
+	<div data-dojo-type="dijit/TooltipDialog" data-dojo-attach-point="settingsDialog" style="display: none;">
+		<div style="width: 400px;">
+			<table style="width: 400px;">
+        <tr>
+          <td><b>${nls.teijishukasaki_title}</b></td>
+          <td class="close-td">
+            <div data-dojo-attach-event="onclick:closeTeijshukaKensaku" class="close-btn">×</div>
+          </td>
+        </tr>
+      </table>
+      <hr>
+      <table>
+        <tr>
+          <td style="width: 100px;"><b>${nls.filterTitle_pattern}</b></td>
+          <td colspan="3"><div data-dojo-attach-point="searchNode_TeijshukaKensaku_pattern" class="search-node"></div></td>
+        </tr>
+        <tr>
+          <td><b>${nls.filterTitle_course}</b></td>
+          <td colspan="3"><div data-dojo-attach-point="searchNode_TeijshukaKensaku_course" class="search-node"></div></td>
+        </tr>
+        <tr>
+          <td><b>${nls.filterTitle_day}</b></td>
+          <td colspan="3"><div data-dojo-attach-point="searchNode_TeijshukaKensaku_day" class="search-node"></div></td>
+        </tr>
+        <tr>
+          <td><b>${nls.filterTitle_time}</b></td>
+          <td><div data-dojo-attach-point="searchNode_TeijshukaKensaku_timeFrom" class="search-node"></div></td>
+          <td>～</td>
+          <td><div data-dojo-attach-point="searchNode_TeijshukaKensaku_timeTo" class="search-node"></div></td>
+        </tr>
+        <tr>
+          <td><b>${nls.showLabel_teiji}</b></td>
+          <td colspan="3"><div data-dojo-attach-point="searchNode_TeijshukaKensaku_teiji" class="search-node"></div></td>
+        </tr>
+        <tr>
+          <td><b>${nls.showLabel_tel}</b></td>
+          <td colspan="3"><div data-dojo-attach-point="searchNode_TeijshukaKensaku_tel" class="search-node"></div></td>
+        </tr>
+      </table>
+		</div>
+    <input id="TeijshukaKensaku_jigyosho" type="hidden" />
+    <div id="TeijshukaKensaku_label_shiten">
+      支店が選択されるまで機能しません<br>
+      複数コース選択する場合は「ctrl」キーを押下しながら選択してください
+    </div>
+	</div>
+</div>
