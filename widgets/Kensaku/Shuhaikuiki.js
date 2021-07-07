@@ -71,7 +71,7 @@ define([
         id: "ShuhaiKuikiCouse_patternSelect",
         options: patternArray,
         sortByLabel: false,
-        disabled: true,
+        disabled: false, // true
         onChange: function(state){
           if(state != "-"){
             common._setDomVal("ShuhaiKuikiCouse_courseSelect", "disabled", false);
@@ -88,7 +88,7 @@ define([
         id: "ShuhaiKuikiCouse_courseSelect",
         options: patternArray,
         sortByLabel: false,
-        disabled: true,
+        disabled: false, // true
         onChange: function(state){
           self._filter(self, state, true);
         },

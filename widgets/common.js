@@ -13,8 +13,24 @@ var kengen_shubetsu = {
 define(["libs/md5/md5"], function (md5) {
   var clazz = {};
 
+  clazz.area_shisha_cd = empty.id;
+  clazz.area_shukan_cd = empty.id;
+  clazz.area_shiten_cd = empty.id;
+  clazz.area_center_cd = empty.id;
+
+  clazz.area_time_select = 0;
+  clazz.area_item_select = "0";
+  
+  clazz.teijishuka_pattern = empty.id;
+  clazz.teijishuka_course   = [];
+  clazz.teijishuka_yobi     = "";
+  clazz.teijishuka_timeFrom = "-";
+  clazz.teijishuka_timeEnd  = "-";
+  clazz.teijishuka_teiji    = "1";
+  clazz.teijishuka_tel      = "0";
+  
   clazz.kengen_lv = "99";
-  clazz.cmid = "";
+  clazz.cmid      = "";
 
   clazz.isAppConfigLoaded = false;
 
@@ -38,13 +54,21 @@ define(["libs/md5/md5"], function (md5) {
 
   };
 
-  clazz._eventHandlerPrefecture = function () {
-    this._onChangeDom("change_pref");
+  clazz._eventHandlerJighosho = function () {
+    this._onChangeDom("NimotsuShousai_jigyosho");
+    this._onChangeDom("TeijshukaKensaku_jigyosho");
+    this._onChangeDom("ShuhaiKuikiCouse_jigyosho");
   };
 
   clazz._eventHandlerNimotsu = function() {
-    console.log("handlerNimotsu");
-  }
+    this._onChangeDom("tokei_hidden");
+    this._onChangeDom("tokeigai_hidden");
+    this._onChangeDom("AttackHani_event");
+  };
+  
+  clazz._eventHandlerTeishu = function() {
+    this._onChangeDom("TeijishukaTable_event");
+  };
 
   clazz._onChangeDom = function (id) {
     var dom = document.getElementById(id);

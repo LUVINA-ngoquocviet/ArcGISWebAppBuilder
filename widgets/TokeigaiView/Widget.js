@@ -69,37 +69,27 @@ define([
       array.some(
         opLayers,
         lang.hitch(this, function (layer) {
-          console.log(layer);
           if (layer.layerType === "ArcGISFeatureLayer") {
             var layerName = self._getTableName(layer);
-            console.log(layerName);
-            if (layerName = "japan_lake") {
-              // if (true) {
+            if (layerName == "japan_railways") {
               opLayer = new FeatureLayer(layer.layerObject.url);
-              console.log(opLayer);
-
               self._changeVal(self, opLayer);
-              tokeigai_sum.onchange = function(evt){
+              tokeigai_sum.onchange = function (evt) {
                 self._changeVal(self, opLayer);
               };
 
               return;
             }
           }
-        }));
+        })
+      );
     },100);
   },
 
     _changeVal: function (self, opLayer) {
       opLayer.queryFeatures(self._queryMethod(self)).then(
         function (response) {
-          var sum = 0;
-          response.features.forEach(function (feature) {
-            for (var key in feature.attributes) {
-              sum = Number(sum) + Number(feature.attributes[key]);
-            }
-          });
-          sum = 999; // delete later
+          var sum =  response.features.length + Number(common.area_item_select) * 42;
           self._setView(sum);
         },
         function (e) {
@@ -114,15 +104,15 @@ define([
     },
 
     _queryMethod: function (self) {
-      var expr = "1 = 1";
-      var itemField = "";
+      var expr = "INT ='" + (common.area_time_select + 2 ) + "'";
+      var itemField = "LENGTH";
       var itemArray = [];
       itemArray.push(itemField);
 
       var query = new Query();
 
       query.where = expr;
-      // query.outFields = itemArray;
+      query.outFields = itemArray;
 
       return query;
     

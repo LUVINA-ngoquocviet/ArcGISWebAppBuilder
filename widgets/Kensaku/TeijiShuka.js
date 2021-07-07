@@ -135,7 +135,7 @@ define([
         id: "TeijshukaKensaku_patternSelect",
         options: patternArray,
         sortByLabel: false,
-        disabled: true,
+        disabled: false, // true
         onChange: function (state) {
           common.teijishuka_pattern = state;
           self._courseListUpdate(self);
@@ -150,7 +150,7 @@ define([
         id: "TeijshukaKensaku_courseSelect",
         options: courseArray,
         sortByLabel: false,
-        disabled: true,
+        disabled: false, // true
         onChange: function (state) {
           common.teijishuka_course = state;
           self._filter(self, true);

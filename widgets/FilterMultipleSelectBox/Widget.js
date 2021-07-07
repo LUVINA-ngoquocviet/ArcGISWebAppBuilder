@@ -9,8 +9,6 @@ define([
   "jimu/FilterManager",
   "jimu/LayerStructure",
   "esri/layers/FeatureLayer",
-  // "esri/tasks/FeatureSet",
-  // 'jimu/utils',
   "esri/tasks/query",
   "dojo/store/Memory",
   "dojo/data/ObjectStore",
@@ -64,7 +62,7 @@ define([
 
       // Initialization
       // common._initKengen();
-      // common._eventHandlerPrefecture();
+      common._eventHandlerJighosho();
 
 
       //Get all layers
@@ -127,6 +125,7 @@ define([
         onChange: function (state) {
           //zoom to map with related data
           self._filter_kaisou(self, state);
+          common._eventHandlerJighosho();
         },
       })
         .placeAt(self.searchNodePrefecture)

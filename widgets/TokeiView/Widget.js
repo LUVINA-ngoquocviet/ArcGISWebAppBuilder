@@ -72,9 +72,8 @@ define([
         lang.hitch(this, function (layer) {
           if (layer.layerType === "ArcGISFeatureLayer") {
             var layerName = self._getTableName(layer);
-            if (layerName = "japan_roads") {
+            if (layerName == "japan_all_stations") {
               opLayer = new FeatureLayer(layer.layerObject.url);
-
               self._changeVal(self, opLayer);
               tokei_sum.onchange = function(evt){
                 self._changeVal(self, opLayer);
@@ -90,13 +89,7 @@ define([
     _changeVal: function (self, opLayer) {
       opLayer.queryFeatures(self._queryMethod(self)).then(
         function (response) {
-          var sum = 0;
-          response.features.forEach(function (feature) {
-            for (var key in feature.attributes) {
-              sum = Number(sum) + Number(feature.attributes[key]);
-            }
-          });
-          sum = 666; // delete later
+          var sum =  response.features.length + Number(common.area_item_select) * 24;
           self._setView(sum);
         },
         function (e) {
@@ -111,15 +104,15 @@ define([
     },
 
     _queryMethod: function (self) {
-      var expr = "1 = 1";
-      var itemField = "";
+      var expr = "INT ='" + (common.area_time_select + 1 ) + "'";
+      var itemField = "LENGTH";
       var itemArray = [];
       itemArray.push(itemField);
 
       var query = new Query();
 
       query.where = expr;
-      // query.outFields = itemArray;
+      query.outFields = itemArray;
 
       return query;
     
