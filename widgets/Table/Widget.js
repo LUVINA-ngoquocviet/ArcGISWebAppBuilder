@@ -111,25 +111,29 @@ define([
             // }
             
           if (layer.layerType === "ArcGISFeatureLayer") {
-            if (title_array[0] = "japan_roads") {
+            if (title_array[0] == "japan_Police_station") {
+              self.layerStructure.getNodeById(layer.id).show();
               self.attackHani_layer_id = layer.id;
               self.opLayerIn = new FeatureLayer(layer.layerObject.url);
+            }else if (title_array[0] == "japan_fire_stations") {
+              self.layerStructure.getNodeById(layer.id).show();
+              self.opLayerOut = new FeatureLayer(layer.layerObject.url);
             }
           }
         }));
-
-        this.opLayers = this.map.itemInfo.itemData.tables;
-        array.some(
-          opLayers,
-          lang.hitch(this, function (layer) {
-            var title_array = layer.title.split(" ");
-            // ...
-            if (layer.selfType === "table") {
-              if (title_array[0] = "japan_roads") {
-                self.opLayerOut = new FeatureLayer(layer.layerObject.url);
-              }
-            }
-          }));
+        
+        // this.opLayers = this.map.itemInfo.itemData.tables;
+        // array.some(
+        //   opLayers,
+        //   lang.hitch(this, function (layer) {
+        //     var title_array = layer.title.split(" ");
+        //     // ...
+        //     if (layer.selfType === "table") {
+        //       if (title_array[0] = "japan_roads") {
+        //         self.opLayerOut = new FeatureLayer(layer.layerObject.url);
+        //       }
+        //     }
+        //   }));
     },
 
     _createTableIn: function(self) {
@@ -224,29 +228,35 @@ define([
     
     _outEvent: function(self) {
       self.checkTrueList = new Array();
-      if(common.area_shiten_cd_0 != "-"){
+      if(common.area_shiten_cd != "-"){
         var query = new Query();
         query.returnGeometry = false;
-        // query.outFields = [];
-        // query.orderByFields = [];
-        query.where = "1 = 1";
+        query.returnDistinctValues = true;
+        query.outFields = ['AAC', 'PCI', 'NA0', 'ADS'];
+        query.orderByFields = ['AAC'];
+        var fromX = common.area_shiten_cd * 10000;
+        var toX = fromX + 10000;
+        var fromY = 3600000 + 300000 * common.area_time_select;
+        var toY = fromY + 300000;
+        query.where = "(XCOORD BETWEEN " + fromX + " AND " + toX + ") AND (YCOORD BETWEEN " + fromY + " AND " + toY + ")";
 
         self.tableDijit[0].clear();
         self.tableDijit[1].clear();
         self.opLayerIn.queryFeatures(query).then(function(response){
           response.features.forEach(function(data){
-            if(data.attributes.shain_kbn == "01") {
+            if(data.attributes.PCI == "14002") {
               var row = self.tableDijit[0].addRow({
-                employee: "employee0", //data.attributes.syain_id
-                quantity: "0個"
+                employee: data.attributes.AAC,
+                quantity: self._getQuantity(data.attributes.ADS)
               }, -1, true);
 
-              dojo.attr(row.tr, "id", "center_ten_cd + syain_id");
+              dojo.attr(row.tr, "id", data.attributes.NA0+ "_" + data.attributes.AAC);
             } else {
               var row = self.tableDijit[1].addRow({
-                employee: "employee1", //data.attributes.syain_id
-                quantity: "1個"
+                employee: data.attributes.AAC,
+                quantity: self._getQuantity(data.attributes.ADS)
               }, -1, true);
+              dojo.attr(row.tr, "id", data.attributes.NA0+ "_" + data.attributes.AAC);
             }
           });
           self.tableDijit[0].updateUI();
@@ -255,17 +265,17 @@ define([
 
         self.tableDijit[2].clear();
         self.tableDijit[3].clear();
-        self.opLayerIn.queryFeatures(query).then(function(response){
+        self.opLayerOut.queryFeatures(query).then(function(response){
           response.features.forEach(function(data){
-            if(data.attributes.shain_kbn == "01") {
+            if(data.attributes.PCI == "15002") {
               var row = self.tableDijit[2].addRow({
-                employee: "employee2", //data.attributes.syain_id
-                quantity: "2個"
+                employee: data.attributes.AAC,
+                quantity: self._getQuantity(data.attributes.ADS)
               }, -1, true);
             } else {
               var row = self.tableDijit[3].addRow({
-                employee: "employee3", //data.attributes.syain_id
-                quantity: "3個"
+                employee: data.attributes.AAC,
+                quantity: self._getQuantity(data.attributes.ADS)
               }, -1, true);
             }
           });
@@ -282,6 +292,13 @@ define([
       self._filter(self, false);
     },
 
+  _getQuantity: function(ads) {
+    var arr = ads.split('-');
+    var quantity = arr.length > 1 ? arr[1] : 1;
+    quantity += "個";
+    return quantity;
+  },
+
   _changeEvent: function(self, checkBox, id){
     if(!checkBox.checked){
       for(let i=0; i< self.checkTrueList.length; i++){
@@ -297,6 +314,14 @@ define([
 
   _filter: function(self, highlightFlg){
     var expr = "";
+    if (self.checkTrueList.length > 0) {
+      self.checkTrueList.forEach(function (id) {
+        var idSplit = id.split("_");
+        expr +=
+          "(NA0 = '" + idSplit[0] + "' AND AAC ='" + idSplit[1] + "')" + " OR ";
+      });
+      expr = expr.substr(0, expr.length - 4);
+    }
 
     self.filterManager.applyWidgetFilter(self.attackHani_layer_id, self.id, expr);
 
@@ -307,10 +332,12 @@ define([
 
   _highlight: function(){
     var layerStructure = LayerStructure.getInstance();
-    var layer = layerStructure.getNodeById(tanto_area_layer_id);
-    layer.getExtent().then(lang.hitch(layer, function(extend){
-      layer.zoomTo(extend);
-    }));
+    var layer = layerStructure.getNodeById(this.attackHani_layer_id);
+    layer.getExtent().then(
+      lang.hitch(layer, function (extend) {
+        layer.zoomTo(extend);
+      })
+    );
   },
 
   });

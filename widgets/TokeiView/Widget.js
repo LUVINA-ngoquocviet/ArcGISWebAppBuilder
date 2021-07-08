@@ -89,7 +89,7 @@ define([
     _changeVal: function (self, opLayer) {
       opLayer.queryFeatures(self._queryMethod(self)).then(
         function (response) {
-          var sum =  response.features.length + Number(common.area_item_select) * 24;
+          var sum =  response.features.length + (8 - Number(common.area_item_select)) * 24;
           self._setView(sum);
         },
         function (e) {

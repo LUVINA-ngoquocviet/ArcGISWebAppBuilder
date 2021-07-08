@@ -71,6 +71,7 @@ define([
             var layerName = title_array[0];
             switch (layerName) {
               case "japan_sea_ports":
+                self.layerStructure.getNodeById(layer.id).show();
                 self.attack_layer_id = layer.id;
                 if (self.shuhaikuiki_suryo_id != "") {
                   self._filter(self);
@@ -78,6 +79,7 @@ define([
                 }
                 break;
               case "japan_airport":
+                self.layerStructure.getNodeById(layer.id).show();
                 self.shuhaikuiki_suryo_id = layer.id;
                 if (self.attack_layer_id != "") {
                   self._filter(self);

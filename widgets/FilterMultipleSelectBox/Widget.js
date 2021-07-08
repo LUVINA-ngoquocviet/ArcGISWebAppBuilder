@@ -98,7 +98,7 @@ define([
 
       //Get data from layer
       var dataArr = [];
-      dataArr.push({ label: empty.label, value: "0", selected: true })
+      dataArr.push({ label: empty.label, value: empty.id, selected: true })
 
       layerFeature.queryFeatures(query).then(
         function (response) {
@@ -123,7 +123,7 @@ define([
         style: "width: 200px;",
         sortByLabel: false,
         onChange: function (state) {
-          //zoom to map with related data
+          common.area_shiten_cd = state;
           self._filter_kaisou(self, state);
           common._eventHandlerJighosho();
         },
