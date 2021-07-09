@@ -124,8 +124,8 @@ define([
         // if(title_array.lenght != 3){
         //   return;
         // }
-        if(layer.selfType === "table") {
-          if(title_array[0] === "???") {
+        if (layer.layerType === "ArcGISFeatureLayer") {
+          if(title_array[0] == "japan_airport") {
             self.opLayer_Shuhaikuiki = new FeatureLayer(layer.layerObject.url);
           }
         }
@@ -136,20 +136,20 @@ define([
       var query = new Query();
       query.returnGeometry = false;
       query.returnDistinctValues = true;
-      // query.outFields = [];
-      // query.orderByFields = [];
-      query.where = " 1 = 1";
+      query.outFields = ["AAC", "FID_1", "NA3", "OPT", "CLT", "REF"];
+      query.orderByFields = ["FID"];
+      query.where = "1 = 1";
 
       var weekList = new Array(empty);
       self.opLayer_Shuhaikuiki.queryFeatures(query).then(function (response) {
         weekList = weekList.concat(response.features.map(function(item){
           return {
-            label: "item.attributes.center_ten_cd.trim()" + " " + "item.attributes.pattern_nm",
-            id: "item.attributes.center_ten_cd.trim()" + " " + "item.attributes.pattern_cd",
+            label: item.attributes.AAC.trim() + " " + item.attributes.NA3,
+            id: item.attributes.AAC.trim() + "_" + item.attributes.FID_1,
           }
         }));
         var objectStore = new ObjectStore({ objectStore: new Memory({ data: weekList })});
-        dijit.byId("ShuhaiKuikiCouse_patternSelect").set("store". objectStore);
+        dijit.byId("ShuhaiKuikiCouse_patternSelect").set("store", objectStore);
       });
     },
 
@@ -179,9 +179,9 @@ define([
       if(disp){
         var q = "";
         if(state.length == 1){
-          q = " 1=1";
+          q = " 1=2";
         } else {
-          q = " 1=1";
+          q = " 1=2";
         }
         
         var query = new Query();

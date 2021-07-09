@@ -72,7 +72,7 @@ define([
           name: "teiji",
           value: "1",
           checked: true,
-          disabled: false, // true
+          disabled: true,
           onChange: function (state) {
             common.teijishuka_teiji = state;
             self._filter(self, true);
@@ -88,7 +88,7 @@ define([
           name: "tel",
           value: "1",
           checked: false,
-          disabled: false, // true
+          disabled: true,
           onChange: function (state) {
             common.teijishuka_tel = state;
             self._filter(self, true);
@@ -135,7 +135,7 @@ define([
         id: "TeijshukaKensaku_patternSelect",
         options: patternArray,
         sortByLabel: false,
-        disabled: false, // true
+        disabled: true,
         onChange: function (state) {
           common.teijishuka_pattern = state;
           self._courseListUpdate(self);
@@ -150,7 +150,7 @@ define([
         id: "TeijshukaKensaku_courseSelect",
         options: courseArray,
         sortByLabel: false,
-        disabled: false, // true
+        disabled: true,
         onChange: function (state) {
           common.teijishuka_course = state;
           self._filter(self, true);
@@ -174,7 +174,7 @@ define([
       var selectDay = new Select({
         id: "TeijshukaKensaku_daySelect",
         options: dayArray,
-        disabled: false, // true
+        disabled: true,
         onChange: function (state) {
           common.teijishuka_yobi = state;
           self._courseListUpdate(self);
@@ -204,7 +204,7 @@ define([
       var timeFrom = new Select({
         id: "TeijshukaKensaku_timeFromSelect",
         options: timeFromArray,
-        disabled: false, // true
+        disabled: true,
         onChange: function (state) {
           common.teijishuka_timeFrom = state;
           self._filter(self, true);
@@ -233,7 +233,7 @@ define([
       var timeTo = new Select({
         id: "TeijshukaKensaku_timeToSelect",
         options: timeToArray,
-        disabled: false, // true
+        disabled: true,
         onChange: function (state) {
           common.teijishuka_timeEnd = state;
           self._filter(self, true);
@@ -274,26 +274,33 @@ define([
       var query = new Query();
       query.returnGeometry = false;
       query.returnDistinctValues = true;
-      // query.outFields = [];
-      // query.orderByFields = [];
-      query.where = " 1 = 1"; // center_ten_cd, area_cd ...
+      query.outFields = ["AAC", "HBC", "NA4", "AD7", "ESD", "EOF"];
+      // query.orderByFields = ["AAC"];
+
+      var fromFID = Number(common.area_shiten_cd) * 22;
+      var toFID = fromFID + 3;
+      query.where = "FID BETWEEN " + fromFID + " AND " + toFID + "";
 
       var weekList = new Array(empty);
-      self.opLayer_TeijshukaKensaku.queryFeatures(query).then(function (response) {
+      opLayer_TeijshukaKensaku.queryFeatures(query).then(function (response) {
+        console.log(response);
         weekList = weekList.concat(
           response.features.map(function (item) {
             return {
-              label: "item.attributes.center_ten_cd.trim()" + " " + "item.attributes.pattern_nm",
-              id: "item.attributes.center_ten_cd.trim()" + " " + "item.attributes.pattern_cd",
+              label: item.attributes.AAC.trim() + " " + item.attributes.NA4,
+              id: item.attributes.AAC.trim() + "_" + item.attributes.HBC,
             };
           })
         );
         var objectStore = new ObjectStore({objectStore: new Memory({ data: weekList }) });
-        dijit.byId("TeijshukaKensaku_patternSelect").set("store".objectStore);
+        dijit.byId("TeijshukaKensaku_patternSelect").set("store", objectStore);
+      }, 
+      function(e) {
+        console.log(e);
       });
     },
 
-    _courseListUpdate: function (self, state) {
+    _courseListUpdate: function (self) {
       var pattern = common._getDomVal("TeijshukaKensaku_patternSelect", "value");
       if (pattern != "-") {
         common._setDomVal("TeijshukaKensaku_courseSelect", "disabled", false);
@@ -301,17 +308,20 @@ define([
         var query = new Query();
         query.returnGeometry = false;
         query.returnDistinctValues = true;
-        // query.outFields = [];
+        query.outFields = ["AAC", "HBC", "AD7"];
         // query.orderByFields = [];
-        var patternArr = state.split("_");
-        query.where = " 1 = 1";
+
+        var expr = "";
+        var patternArr = pattern.split('_');
+        expr += "AAC ='" + patternArr[0] + "'";
+        query.where = expr;
 
         dojo.empty("TeijshukaKensaku_courseSelect");
         opLayer_TeijshukaKensaku.queryFeatures(query).then(function (response) {
           response.features.map(function (item) {
             var opt = win.doc.createElement("option");
-            opt.innerHTML = "item.attributes.center_ten_cd.trim()" + " " + "item.attributes.course_nm";
-            opt.value = "item.attributes.course_cd";
+            opt.innerHTML = item.attributes.AAC.trim() + " " + (item.attributes.AD7.trim() != '' ? item.attributes.AD7 : "無名");
+            opt.value = item.attributes.HBC;
             dom.byId("TeijshukaKensaku_courseSelect").appendChild(opt);
           });
         });

@@ -102,7 +102,7 @@ define([
       new Select({
         id: "NimotsuShousai_timezoneSelect",
         options: timezoneArray,
-        disabled: false,
+        disabled: true,
         onChange: function (state) {
           common.area_time_select = state;
           self._filter(self);
@@ -125,7 +125,7 @@ define([
       new Select({
         id: "NimotsuShousai_itemSelect",
         options: itemTypeArray,
-        disabled: false,
+        disabled: true,
         onChange: function (state) {
           common.area_item_select = state;
           self._filter(self);
@@ -138,7 +138,17 @@ define([
 
     _jigyoshoFilterEvent: function (self) {
       var shitenTimeLabel = document.getElementById("shitenTimeLabel");
-      //...
+      if( common.area_shiten_cd != "-") {
+        shitenTimeLabel.style.display = "none";
+        common._setDomVal("NimotsuShousai_timezoneSelect", "disabled", false);
+        common._setDomVal("NimotsuShousai_itemSelect", "disabled", false);
+      }else {
+        shitenTimeLabel.style.display = "";
+        common._setDomVal("NimotsuShousai_timezoneSelect", "value", 0);
+        common._setDomVal("NimotsuShousai_itemSelect", "value", "0");
+        common._setDomVal("NimotsuShousai_timezoneSelect", "disabled", true);
+        common._setDomVal("NimotsuShousai_itemSelect", "disabled", true);
+      }
       self._filter(self);
       common._eventHandlerNimotsu();
     },
