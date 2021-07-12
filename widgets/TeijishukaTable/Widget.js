@@ -66,15 +66,12 @@ define([
 
       this.opLayers = this.map.itemInfo.itemData.operationalLayers;
       array.some(
-        opLayers,
+        this.opLayers,
         lang.hitch(this, function (layer) {
-            var title_array = layer.title.split(" ");
-            // if (title_array.length != 3) {
-            //   return;
-            // }
-            
           if (layer.layerType === "ArcGISFeatureLayer") {
-            if (title_array[0] = "japan_railways") {
+            var title_array = layer.title.split(" ");
+            
+            if (title_array[0] == "japan_airport") {
               self.opLayer = new FeatureLayer(layer.layerObject.url);
             }
           }
@@ -124,18 +121,21 @@ define([
     },
     
     _outEvent: function(self) {
-      if(common.area_shiten_cd_0 != "-"){
+      if(common.area_shiten_cd != "-"){
         var query = new Query();
         var queryCount = new Query();
 
         query.returnGeometry = false;
-        // query.outFields = [];
+        query.outFields = ["AAC", "FID_1","COA", "NA3", "OPT", "CLT", "AD2"];
         // query.orderByFields = [];
         queryCount.returnGeometry = false;
-        // queryCount.outFields = [];
-        // queryCount.orderByFields = [];
-        query.where = "1 = 1";
-        queryCount.where = "1 = 1";
+        queryCount.returnDistinctValues = true;
+        queryCount.outFields = ["FID_1"];
+
+        var expr = common.teijishuka_expr ? common.teijishuka_expr : "1 = 1";
+        console.log(expr);
+        query.where = expr;
+        queryCount.where = expr;
         var countNoki = 0;
 
         self.opLayer.queryFeatures(queryCount).then(function(response){
@@ -157,10 +157,10 @@ define([
             _no++;
             self.tableDijit.addRow({
               no: _no,
-              center_ten_cd: "_center_ten_cd" + _no,
-              jusho: "_jusho" + _no,
-              shuka_time_disp: "_shuka_time_disp" + _no,
-              yobi: "_yobi" + _no
+              center_ten_cd: data.attributes.AAC,
+              jusho: data.attributes.COA,
+              shuka_time_disp: data.attributes.OPT + '~' + data.attributes.CLT,
+              yobi: self._formatYobi(data.attributes.AD2)
             }, -1, true);
 
           });
@@ -176,11 +176,39 @@ define([
       }
     },
 
+  _formatYobi(AD2){
+    var yobi = "";
+    switch (AD2) {
+      case '1':
+        yobi = "月";
+        break;
+      case '2':
+        yobi = "火";
+        break;
+      case '3':
+        yobi = "水";
+        break;
+      case '4':
+        yobi = "木";
+        break;
+      case '5':
+        yobi = "金";
+        break;
+      case '6':
+        yobi = "土";
+        break;
+      default:
+        break;
+    }
+    return yobi;
+  },
+
   print: function(){
     var url = "https://www.luvina.net";
     // url += "?param=" + common.kengen_lv;
 
     window.open(url, "_blank");
+    alert("稼働画面に移動");
   },
 
   });

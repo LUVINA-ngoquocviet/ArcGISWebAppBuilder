@@ -71,7 +71,7 @@ define([
           id: "TeijshukaKensaku_teiji",
           name: "teiji",
           value: "1",
-          checked: true,
+          checked: false,
           disabled: true,
           onChange: function (state) {
             common.teijishuka_teiji = state;
@@ -242,6 +242,7 @@ define([
     _filter: function (self, disp) {
       var expr = "1 = 1 ";
       if (!disp) {
+        common.teijishuka_expr = expr; // save sql for teijishuka_table
         self.filterManager.applyWidgetFilter(self.teishusaki_layer_id, self.id,expr);
         common._eventHandlerTeishu();
         return;
@@ -277,7 +278,7 @@ define([
         timeEnd = timeEnd.slice(0, 2) + " " + timeEnd.slice(2);
         expr += " AND CLT >= '" + timeEnd + "'";
       }
-      
+      common.teijishuka_expr = expr; // save sql for teijishuka_table
       self.filterManager.applyWidgetFilter(self.teishusaki_layer_id, self.id, expr);
       common._eventHandlerTeishu();
     },

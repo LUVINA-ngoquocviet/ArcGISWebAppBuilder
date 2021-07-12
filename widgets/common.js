@@ -28,6 +28,7 @@ define(["libs/md5/md5"], function (md5) {
   clazz.teijishuka_timeEnd  = "-";
   clazz.teijishuka_teiji    = "1";
   clazz.teijishuka_tel      = "0";
+  clazz.teijishuka_expr     = "";
   
   clazz.kengen_lv = "99";
   clazz.cmid      = "";
