@@ -107,25 +107,22 @@ define([
       array.some(
         this.opLayers,
         lang.hitch(this, function (layer) {
-          if (layer.layerType === "ArcGISFeatureLayer") {
-            var title_array = layer.title.split(" ");
-            // if(title_array.lenght != 3){
-            //   return;
-            // }
-            if (layer.layerType === "ArcGISFeatureLayer") {
-              switch (title_array[0]) {
-                case "japan_sea_ports":
-                  opLayer_TeijshukaKensaku = new FeatureLayer(
-                    layer.layerObject.url
-                  );
-                  self.teishusaki_layer_id = layer.id;
-                  self._filter(self, false);
-                  break;
-              }
-            }
+        if (layer.layerType === "ArcGISFeatureLayer") {
+          var title_array = layer.title.split(" ");
+          // if(title_array.lenght != 3){
+          //   return;
+          // }
+          switch (title_array[0]) {
+            case "japan_airport":
+              opLayer_TeijshukaKensaku = new FeatureLayer(
+                layer.layerObject.url
+              );
+              self.teishusaki_layer_id = layer.id;
+              self._filter(self, false);
+              break;
           }
-        })
-      );
+        }
+        }));
     },
 
     _createSelect: function (self) {
@@ -243,11 +240,10 @@ define([
     },
 
     _filter: function (self, disp) {
-      var expr = "";
+      var expr = "1 = 1 ";
       if (!disp) {
-        expr = "1=2";
-        self.filterManager.applyWidgetFilter(self.course_layer_id, self.id,expr);
-        // common._eventHandlerTeishu();
+        self.filterManager.applyWidgetFilter(self.teishusaki_layer_id, self.id,expr);
+        common._eventHandlerTeishu();
         return;
       }
 
@@ -258,37 +254,52 @@ define([
       
       // 定時集荷・電話集荷
       var teiji = common._getDomVal("TeijshukaKensaku_teiji", "value");
+      if (teiji) {
+        expr += " AND REF = '1'";
+      }
       var tel = common._getDomVal("TeijshukaKensaku_tel", "value");
+      if (tel) {
+        expr += " AND INP = '5'";
+      }
       // if teiji == "1" yobi =...
       // expr += "...flg = '1'" and
+      var yobi = common._getDomVal("TeijshukaKensaku_daySelect", "value");
+      if (yobi != "-") {
+        expr += " AND AD2 = '" + yobi + "'";
+      }
       var timeFrom = common._getDomVal("TeijshukaKensaku_timeFromSelect", "value");
+      if (timeFrom != '-') {
+        timeFrom = timeFrom.slice(0, 2) + " " + timeFrom.slice(2);
+        expr += " AND OPT <= '" + timeFrom + "'";
+      }
       var timeEnd = common._getDomVal("TeijshukaKensaku_timeToSelect", "value");
-      // if timeFrom != '-'.. expr += ...
-      // if timeTo != '-'.. expr += ...
-      self.filterManager.applyWidgetFilter(self.teishusaki_layer_id, self.id, expr);
-      // common._eventHandlerTeishu();
+      if (timeEnd != '-') {
+        timeEnd = timeEnd.slice(0, 2) + " " + timeEnd.slice(2);
+        expr += " AND CLT >= '" + timeEnd + "'";
+      }
       
+      self.filterManager.applyWidgetFilter(self.teishusaki_layer_id, self.id, expr);
+      common._eventHandlerTeishu();
     },
 
     _patternListUpdate: function (self) {
       var query = new Query();
       query.returnGeometry = false;
       query.returnDistinctValues = true;
-      query.outFields = ["AAC", "HBC", "NA4", "AD7", "ESD", "EOF"];
+      query.outFields = ["AAC", "FID_1","AD2", "NA3", "OPT", "CLT", "REF"];
       // query.orderByFields = ["AAC"];
 
-      var fromFID = Number(common.area_shiten_cd) * 22;
+      var fromFID = Number(common.area_shiten_cd) * 2;
       var toFID = fromFID + 3;
       query.where = "FID BETWEEN " + fromFID + " AND " + toFID + "";
 
       var weekList = new Array(empty);
       opLayer_TeijshukaKensaku.queryFeatures(query).then(function (response) {
-        console.log(response);
         weekList = weekList.concat(
           response.features.map(function (item) {
             return {
-              label: item.attributes.AAC.trim() + " " + item.attributes.NA4,
-              id: item.attributes.AAC.trim() + "_" + item.attributes.HBC,
+              label: item.attributes.NA3,
+              id: item.attributes.AAC.trim() + "_" + item.attributes.FID_1,
             };
           })
         );
@@ -308,7 +319,7 @@ define([
         var query = new Query();
         query.returnGeometry = false;
         query.returnDistinctValues = true;
-        query.outFields = ["AAC", "HBC", "AD7"];
+        query.outFields = ["FID_1", "AAC", "COA", "DSA"];
         // query.orderByFields = [];
 
         var expr = "";
@@ -320,8 +331,8 @@ define([
         opLayer_TeijshukaKensaku.queryFeatures(query).then(function (response) {
           response.features.map(function (item) {
             var opt = win.doc.createElement("option");
-            opt.innerHTML = item.attributes.AAC.trim() + " " + (item.attributes.AD7.trim() != '' ? item.attributes.AD7 : "無名");
-            opt.value = item.attributes.HBC;
+            opt.innerHTML = item.attributes.AAC.trim() + " " + (item.attributes.DSA.trim() != '' ? item.attributes.DSA : "不明");
+            opt.value = item.attributes.FID_1;
             dom.byId("TeijshukaKensaku_courseSelect").appendChild(opt);
           });
         });
@@ -390,4 +401,3 @@ define([
     },
   });
 });
-      
