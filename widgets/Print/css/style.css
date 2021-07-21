@@ -92,3 +92,39 @@
   color: #a0acbf;
   width: 100%;
 }
+
+.wrapper-grid {
+  background-color: blue;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 9;
+    opacity: 0.3;
+
+    text-align: center;
+
+    display: grid;
+    /* grid-template-columns: 100px 100px 100px;
+    grid-template-rows: 100px 100px 100px; */
+    grid-template-columns: repeat(5, 20%);
+    grid-template-rows: repeat(3, 33.3333333333%);
+    grid-gap: 0px;
+
+}
+
+div[class*="item-grid"]:hover {  
+  opacity: 0.5;
+  background: yellow;
+}
+
+div[class*="item-grid"]{
+  border: 1px solid rgba(0, 0, 0, 0.8);
+}
+
+div#map_layers {
+  position: absolute;
+}
+
+div#map_container {
+  position: relative;
+}

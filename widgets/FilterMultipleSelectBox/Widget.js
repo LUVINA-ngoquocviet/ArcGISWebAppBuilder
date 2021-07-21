@@ -148,6 +148,8 @@ define([
 
       var obj = layer.getExtent().then(
         lang.hitch(layer, function (extend) {
+          console.log("extend");
+          console.log(extend);
           layer.zoomTo(extend);
         })
       );

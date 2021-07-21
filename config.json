@@ -228,6 +228,19 @@
       },
       {
         "position": {
+          "right": 100,
+          "top": 100,
+          "relativeTo": "map"
+        },
+        "placeholderIndex": 1,
+        "id": "_37",
+        "name": "CustomLegend",
+        "version": "2.20",
+        "uri": "widgets/CustomLegend/Widget",
+        "config": "configs/CustomLegend/config__37.json"
+      },
+      {
+        "position": {
           "left": 230,
           "top": 10,
           "relativeTo": "map"

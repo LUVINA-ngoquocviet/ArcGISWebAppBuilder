@@ -474,6 +474,7 @@ LabelClass, PopupTemplate, Legend, Graphic, Point, Query, RelationshipQuery, Que
     },
 
     _initLegendsNode: function(legendsNode) {
+      console.log("CHECK");
       var legendInfos = [];
       var layer = this.layerObject;
 

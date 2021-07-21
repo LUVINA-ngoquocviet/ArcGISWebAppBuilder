@@ -15,6 +15,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 define([
+  'widgets/common',
   'dojo/_base/declare',
   'dijit/_WidgetBase',
   'dijit/_TemplatedMixin',
@@ -59,8 +60,11 @@ define([
   'dijit/form/RadioButton',
   'dijit/form/SimpleTextarea',
   'esri/IdentityManager',
-  'dojo/store/Memory'
-], function(
+  'dojo/store/Memory',
+  'esri/geometry/Extent',
+  'dojo/dom'
+], function (
+  common,
   declare,
   _WidgetBase,
   _TemplatedMixin,
@@ -93,7 +97,9 @@ define([
   srUtils,
   on,
   popup,
-  ValidationTextBox) {
+  ValidationTextBox,
+  Extent,
+  dom) {
   // Main print dijit
   var PrintDijit = declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
     widgetsInTemplate: true,
@@ -118,7 +124,39 @@ define([
 
     _currentTemplateInfo: null,
 
-    postCreate: function() {
+    postCreate: function () {
+      console.log("Begin");
+      console.log(this.map);
+
+      domConstruct.destroy("wrapper-grid");
+      var row = domConstruct.toDom(
+        `<div id="wrapper-grid" class="wrapper-grid">
+              <div class="item-grid" id="item-grid-1">1</div>
+              <div class="item-grid" id="item-grid-2">2</div>
+              <div class="item-grid">3</div>
+              <div class="item-grid">4</div>
+              <div class="item-grid">5</div>
+              <div class="item-grid">6</div>
+              <div class="item-grid">7</div>
+              <div class="item-grid">8</div>
+              <div class="item-grid">9</div>
+              <div class="item-grid">10</div>
+              <div class="item-grid">11</div>
+              <div class="item-grid">12</div>
+              <div class="item-grid">13</div>
+              <div class="item-grid">14</div>
+              <div class="item-grid">15</div>
+            </div>`);
+      domConstruct.place(row, "map_layers", "after");
+
+      console.log("check");
+      console.log(document.getElementById("item-grid-2"));
+
+      this.own(on(document.getElementById("item-grid-2"), 'click', lang.hitch(this, function (event) {
+        this._onClickDiv(1);
+      })));
+      
+
       this.inherited(arguments);
       var printParams = {
         async: this.async
@@ -143,7 +181,7 @@ define([
       this.copyrightNode.set('value', this.defaultCopyright);
       this.copyrightNode.set('readOnly', !this.copyrightEditable);
 
-      srUtils.loadResource().then(lang.hitch(this, function() {
+      srUtils.loadResource().then(lang.hitch(this, function () {
         var wkidLabel;
         if (srUtils.isValidWkid(this.map.spatialReference.wkid)) {
           this.wkidInput.set('value', this.map.spatialReference.wkid);
@@ -156,7 +194,7 @@ define([
           this.wkidLabel.title = '';
         }
         this.wkidInput.set('invalidMessage', this.nls.invalidWkid);
-        this.wkidInput.validator = function(value) {
+        this.wkidInput.validator = function (value) {
           return !value || value.trim() === '' || srUtils.isValidWkid(+value);
         };
       }));
@@ -185,21 +223,21 @@ define([
       }
 
       LayerInfos.getInstance(this.map, this.map.itemInfo)
-        .then(lang.hitch(this, function(layerInfosObj) {
+        .then(lang.hitch(this, function (layerInfosObj) {
           this.layerInfosObj = layerInfosObj;
           return all([this._getPrintTaskInfo(), this._getLayerTemplatesInfo()])
-            .then(lang.hitch(this, function(results) {
+            .then(lang.hitch(this, function (results) {
               var taksInfo = results[0],
                 templatesInfo = results[1];
               if (templatesInfo && !templatesInfo.error) {
                 var parameters = templatesInfo && templatesInfo.results;
                 if (parameters && parameters.length > 0) {
-                  array.some(parameters, lang.hitch(this, function(p) {
+                  array.some(parameters, lang.hitch(this, function (p) {
                     return p && p.paramName === 'Output_JSON' ?
                       this.templateInfos = p.value : false;
                   }));
                   if (this.templateInfos && this.templateInfos.length > 0) {
-                    this.templateNames = array.map(this.templateInfos, function(ti) {
+                    this.templateNames = array.map(this.templateInfos, function (ti) {
                       return ti.layoutTemplate;
                     });
                   }
@@ -209,12 +247,13 @@ define([
                   templatesInfo && templatesInfo.error);
               }
               if (!esriLang.isDefined(taksInfo) || (taksInfo && taksInfo.error)) {
+
                 this._handleError(taksInfo.error);
               } else {
                 this._handlePrintInfo(taksInfo);
               }
             }));
-        })).always(lang.hitch(this, function() {
+        })).always(lang.hitch(this, function () {
           this.shelter.hide();
         }));
 
@@ -240,7 +279,26 @@ define([
       }
     },
 
-    _onOutputSRChange: function(newValue) {
+    _onClickDiv: function (index) {
+      console.log("Lấy list tọa độ");
+
+      var currentExtent = this.map.geographicExtent;
+      var listCoordinates = common._getListCoordinates(currentExtent.xmin, currentExtent.ymin, currentExtent.xmax, currentExtent.ymax);
+
+      var extentGeo = new esri.geometry.Extent();
+
+      extentGeo.xmin = listCoordinates[index].xmin;
+      extentGeo.ymin = listCoordinates[index].ymin;
+      extentGeo.xmax = listCoordinates[index].xmax;
+      extentGeo.ymax = listCoordinates[index].ymax;
+
+      console.log("Lấy tọa độ div hiện tại");
+      console.log(extentGeo);
+
+      this.map.setExtent(extentGeo, true);
+    },
+
+    _onOutputSRChange: function (newValue) {
       var wkidLabel;
       if (srUtils.isValidWkid(+newValue)) {
         wkidLabel = srUtils.getSRLabel(+newValue);
@@ -252,14 +310,14 @@ define([
       }
     },
 
-    _hasLabelLayer: function() {
-      return array.some(this.map.graphicsLayerIds, function(glid) {
+    _hasLabelLayer: function () {
+      return array.some(this.map.graphicsLayerIds, function (glid) {
         var l = this.map.getLayer(glid);
         return l && l.declaredClass === 'esri.layers.LabelLayer';
       }, this);
     },
 
-    _getPrintTaskInfo: function() {
+    _getPrintTaskInfo: function () {
       // portal own print url: portalname/arcgis/sharing/tools/newPrint
       var def = new Deferred();
       if (this._isNewPrintUrl) { // portal own print url
@@ -275,23 +333,23 @@ define([
           callbackParamName: "callback",
           handleAs: "json",
           timeout: 60000
-        }).then(lang.hitch(this, function(data) {
-            def.resolve({
-              isGPPrint: true,
-              data: data
-            });
-          }), lang.hitch(this, function(err) {
-            def.resolve({
-              error: err
-            });
-          })
+        }).then(lang.hitch(this, function (data) {
+          def.resolve({
+            isGPPrint: true,
+            data: data
+          });
+        }), lang.hitch(this, function (err) {
+          def.resolve({
+            error: err
+          });
+        })
         );
       }
 
       return def;
     },
 
-    _getLayerTemplatesInfo: function() {
+    _getLayerTemplatesInfo: function () {
       var def = new Deferred();
       var parts = this.printTaskURL.split('/');
       var pos = parts.indexOf('GPServer');
@@ -312,9 +370,9 @@ define([
           callbackParamName: "callback",
           handleAs: "json",
           timeout: 60000
-        }).then(lang.hitch(this, function(info) {
+        }).then(lang.hitch(this, function (info) {
           def.resolve(info);
-        }), lang.hitch(this, function(err) {
+        }), lang.hitch(this, function (err) {
           def.resolve({
             error: err
           });
@@ -326,15 +384,15 @@ define([
       return def;
     },
 
-    _fixInvalidSymbol: function(opLayers) {
-      array.forEach(opLayers, function(ol) {
+    _fixInvalidSymbol: function (opLayers) {
+      array.forEach(opLayers, function (ol) {
         if (ol.id === 'map_graphics') {
           var layers = lang.getObject('featureCollection.layers', false, ol);
           if (layers && layers.length > 0) {
-            array.forEach(layers, function(layer) {
+            array.forEach(layers, function (layer) {
               if (layer && layer.featureSet &&
                 layer.featureSet.geometryType === "esriGeometryPoint") {
-                array.forEach(layer.featureSet.features, function(f) {
+                array.forEach(layer.featureSet.features, function (f) {
                   if (f && f.symbol && !f.symbol.style) {
                     f.symbol.style = "esriSMSSquare";
                   }
@@ -347,17 +405,17 @@ define([
       return opLayers;
     },
 
-    _excludeInvalidLegend: function(opLayers) {
+    _excludeInvalidLegend: function (opLayers) {
       function getSubLayerIds(legendLayer) {
-        return array.filter(legendLayer.subLayerIds, lang.hitch(this, function(subLayerId) {
+        return array.filter(legendLayer.subLayerIds, lang.hitch(this, function (subLayerId) {
           var subLayerInfo = this.layerInfosObj.getLayerInfoById(legendLayer.id + '_' + subLayerId);
           return subLayerInfo && subLayerInfo.getShowLegendOfWebmap();
         }));
       }
 
       if (this.printTask.allLayerslegend) {
-        var legends = arcgisUtils.getLegendLayers({map: this.map, itemInfo: this.map.itemInfo});
-        var legendLayersOfWebmap = array.map(legends, function(legend) {
+        var legends = arcgisUtils.getLegendLayers({ map: this.map, itemInfo: this.map.itemInfo });
+        var legendLayersOfWebmap = array.map(legends, function (legend) {
           return {
             id: legend.layer.id
           };
@@ -384,8 +442,8 @@ define([
         }
 
         // fix issue 6072
-        array.forEach(legendLayersOfWebmap, lang.hitch(this, function(legend) {
-          var inLegends = array.some(arr, lang.hitch(this, function(l) {
+        array.forEach(legendLayersOfWebmap, lang.hitch(this, function (legend) {
+          var inLegends = array.some(arr, lang.hitch(this, function (l) {
             return l.id === legend.id;
           }));
           var layerInfo = this.layerInfosObj.getLayerInfoById(legend.id);
@@ -400,7 +458,7 @@ define([
       return opLayers;
     },
 
-    printDefInspector: function(printDef) {
+    printDefInspector: function (printDef) {
       //do what you want here then return the object.
       if (this.preserve.preserveScale === 'force') {
         printDef.mapOptions.scale = this.preserve.forcedScale;
@@ -408,24 +466,24 @@ define([
       return printDef;
     },
 
-    _handleError: function(err) {
+    _handleError: function (err) {
       console.log('print widget load error: ', err);
       new Message({
         message: err.message || err
       });
     },
 
-    onLayoutChange: function(newValue) {
+    onLayoutChange: function (newValue) {
       var pos = this.templateNames && this.templateNames.indexOf(newValue);
       if (pos > -1) {
         html.empty(this.customTextElementsTable);
         var templateInfo = this._currentTemplateInfo = this.templateInfos[pos];
-        var customTextElements =  lang.getObject(
+        var customTextElements = lang.getObject(
           "layoutOptions.customTextElements",
           false, templateInfo);
         if (customTextElements && customTextElements.length > 0) {
           var textNames = [];
-          array.forEach(customTextElements, lang.hitch(this, function(cte) {
+          array.forEach(customTextElements, lang.hitch(this, function (cte) {
             for (var p in cte) {
               if (textNames.indexOf(p) < 0) {
                 var row = this.customTextElementsTable.insertRow(-1);
@@ -500,7 +558,7 @@ define([
       }
     },
 
-    _getMapAttribution: function() {
+    _getMapAttribution: function () {
       var attr = this.map.attribution;
       if (attr && attr.domNode) {
         return html.getProp(attr.domNode, 'textContent');
@@ -509,12 +567,12 @@ define([
       }
     },
 
-    closeSettings: function() {
+    closeSettings: function () {
       popup.close(this.settingsDialog);
       this._showSettings = false;
     },
 
-    showSettings: function(event) {
+    showSettings: function (event) {
       event.preventDefault();
       event.stopPropagation();
       if (this._showSettings) {
@@ -529,7 +587,7 @@ define([
       }
     },
 
-    _handlePrintInfo: function(rData) {
+    _handlePrintInfo: function (rData) {
       if (!rData.isGPPrint) {
         domStyle.set(this.layoutDijit.domNode.parentNode.parentNode, 'display', 'none');
         domStyle.set(this.formatDijit.domNode.parentNode.parentNode, 'display', 'none');
@@ -557,20 +615,20 @@ define([
         // } else {
         //   domStyle.set(this.advancedButtonDijit.domNode, 'display', 'none');
         // }
-        var Layout_Template = array.filter(data.parameters, function(param) {
+        var Layout_Template = array.filter(data.parameters, function (param) {
           return param.name === "Layout_Template";
         });
         if (Layout_Template.length === 0) {
           console.log("print service parameters name for templates must be \"Layout_Template\"");
           return;
         }
-        var layoutItems = array.map(Layout_Template[0].choiceList, function(item) {
+        var layoutItems = array.map(Layout_Template[0].choiceList, function (item) {
           return {
             label: item,
             value: item
           };
         });
-        layoutItems.sort(function(a, b) {
+        layoutItems.sort(function (a, b) {
           return (a.label > b.label) ? 1 : ((b.label > a.label) ? -1 : 0);
         });
         if (layoutItems.length > 0) {
@@ -588,20 +646,20 @@ define([
           this.layoutDijit.set('value', this.defaultLayout);
         }
 
-        var Format = array.filter(data.parameters, function(param) {
+        var Format = array.filter(data.parameters, function (param) {
           return param.name === "Format";
         });
         if (Format.length === 0) {
           console.log("print service parameters name for format must be \"Format\"");
           return;
         }
-        var formatItems = array.map(Format[0].choiceList, function(item) {
+        var formatItems = array.map(Format[0].choiceList, function (item) {
           return {
             label: item,
             value: item
           };
         });
-        formatItems.sort(function(a, b) {
+        formatItems.sort(function (a, b) {
           return (a.label > b.label) ? 1 : ((b.label > a.label) ? -1 : 0);
         });
         if (formatItems.length > 0) {
@@ -621,7 +679,7 @@ define([
       }
     },
 
-    print: function() {
+    print: function () {
       if (this.printSettingsFormDijit.isValid()) {
         var form = this.printSettingsFormDijit.get('value');
         lang.mixin(form, this.layoutMetadataDijit.get('value'));
@@ -644,7 +702,7 @@ define([
           cte[p] = elementsObj[p];
           cteArray.push(cte);
         }
-        if(!hasDate) {
+        if (!hasDate) {
           cteArray.push({ Date: new Date().toLocaleString(locale) });
         }
 
@@ -701,15 +759,15 @@ define([
       }
     },
 
-    _getLegendLayers: function() {
+    _getLegendLayers: function () {
       var hasLegend = lang.getObject('layoutOptions.hasLegend', false, this._currentTemplateInfo);
       var enabledLegend = this.layoutForm.legend.length > 0 && this.layoutForm.legend[0];
       if (this.printTask && !this.printTask._createOperationalLayers) {
         // if don't have _createOptionalLayers function
         var legendLayers = [];
         if (hasLegend && enabledLegend) {
-          var legends = arcgisUtils.getLegendLayers({map: this.map, itemInfo: this.map.itemInfo});
-          legendLayers = array.map(legends, function(legend) {
+          var legends = arcgisUtils.getLegendLayers({ map: this.map, itemInfo: this.map.itemInfo });
+          legendLayers = array.map(legends, function (legend) {
             return {
               layerId: legend.layer.id
             };
@@ -722,20 +780,20 @@ define([
       }
     },
 
-    clearResults: function() {
+    clearResults: function () {
       domConstruct.empty(this.printResultsNode);
       domStyle.set(this.clearActionBarNode, 'display', 'none');
       this.count = 1;
     },
 
-    updateAuthor: function(user) {
+    updateAuthor: function (user) {
       user = user || '';
       if (user && this.authorTB) {
         this.authorTB.set('value', user);
       }
     },
 
-    getCurrentMapScale: function() {
+    getCurrentMapScale: function () {
       this.forceScaleNTB.set('value', this.map.getScale());
     }
   });
@@ -745,12 +803,12 @@ define([
     widgetsInTemplate: true,
     templateString: printResultTemplate,
     url: null,
-    postCreate: function() {
+    postCreate: function () {
       this.inherited(arguments);
       this.progressBar.set('label', this.nls.creatingPrint);
       this.fileHandle.then(lang.hitch(this, '_onPrintComplete'), lang.hitch(this, '_onPrintError'));
     },
-    _onPrintComplete: function(data) {
+    _onPrintComplete: function (data) {
       if (data.url) {
         this.url = data.url;
         html.setStyle(this.progressBar.domNode, 'display', 'none');
@@ -760,7 +818,7 @@ define([
         this._onPrintError(this.nls.printError);
       }
     },
-    _onPrintError: function(err) {
+    _onPrintError: function (err) {
       console.log(err);
       html.setStyle(this.progressBar.domNode, 'display', 'none');
       html.setStyle(this.errNode, 'display', 'block');
@@ -768,11 +826,14 @@ define([
 
       html.setAttr(this.domNode, 'title', err.details || err.message || "");
     },
-    _openPrint: function() {
+    _openPrint: function () {
       if (this.url !== null) {
         window.open(this.url);
       }
-    }
+    },
+
+    
+
   });
   return PrintDijit;
 });
