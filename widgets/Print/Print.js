@@ -15,7 +15,6 @@
 ///////////////////////////////////////////////////////////////////////////
 
 define([
-  'widgets/common',
   'dojo/_base/declare',
   'dijit/_WidgetBase',
   'dijit/_TemplatedMixin',
@@ -61,10 +60,12 @@ define([
   'dijit/form/SimpleTextarea',
   'esri/IdentityManager',
   'dojo/store/Memory',
-  'esri/geometry/Extent',
-  'dojo/dom'
+  'dojo/dom',
+  'widgets/common',
+  'jimu/WidgetManager',
+  'dojo/keys',
+  'dojo/NodeList-dom'
 ], function (
-  common,
   declare,
   _WidgetBase,
   _TemplatedMixin,
@@ -98,8 +99,22 @@ define([
   on,
   popup,
   ValidationTextBox,
-  Extent,
-  dom) {
+  Form,
+  Select,
+  NumberTextBox,
+  Button,
+  CheckBox,
+  ProgressBar,
+  DropDownButton,
+  TooltipDialog,
+  RadioButton,
+  SimpleTextarea,
+  IdentityManager,
+  Memory,
+  dom,
+  common,
+  WidgetManager,
+  keys) {
   // Main print dijit
   var PrintDijit = declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
     widgetsInTemplate: true,
@@ -125,38 +140,6 @@ define([
     _currentTemplateInfo: null,
 
     postCreate: function () {
-      console.log("Begin");
-      console.log(this.map);
-
-      domConstruct.destroy("wrapper-grid");
-      var row = domConstruct.toDom(
-        `<div id="wrapper-grid" class="wrapper-grid">
-              <div class="item-grid" id="item-grid-1">1</div>
-              <div class="item-grid" id="item-grid-2">2</div>
-              <div class="item-grid">3</div>
-              <div class="item-grid">4</div>
-              <div class="item-grid">5</div>
-              <div class="item-grid">6</div>
-              <div class="item-grid">7</div>
-              <div class="item-grid">8</div>
-              <div class="item-grid">9</div>
-              <div class="item-grid">10</div>
-              <div class="item-grid">11</div>
-              <div class="item-grid">12</div>
-              <div class="item-grid">13</div>
-              <div class="item-grid">14</div>
-              <div class="item-grid">15</div>
-            </div>`);
-      domConstruct.place(row, "map_layers", "after");
-
-      console.log("check");
-      console.log(document.getElementById("item-grid-2"));
-
-      this.own(on(document.getElementById("item-grid-2"), 'click', lang.hitch(this, function (event) {
-        this._onClickDiv(1);
-      })));
-      
-
       this.inherited(arguments);
       var printParams = {
         async: this.async
@@ -279,23 +262,201 @@ define([
       }
     },
 
-    _onClickDiv: function (index) {
-      console.log("Lấy list tọa độ");
+    _printWithGridLayout: function () {
+      //Phóng to cửa sổ map
+      if (query(".lm_maximised").length == 0) {
+        query(".no-tabs").children().forEach(function (node) {
+          if (domClass.contains(node, "lm_controls")) {
+            query(".lm_maximise", node).forEach(function (nodeChild) {
+              nodeChild.click();
+            });
+          }
+        });
+      }
 
-      var currentExtent = this.map.geographicExtent;
-      var listCoordinates = common._getListCoordinates(currentExtent.xmin, currentExtent.ymin, currentExtent.xmax, currentExtent.ymax);
+      //Tạo grid layout 
+      if (dom.byId("wrapper-grid")) {
+        domConstruct.destroy("wrapper-grid")
+      }
+      var divWrapper = domConstruct.toDom(`<div id="wrapper-grid" class="wrapper-grid"</div>`);
+      for (let i = 0; i < common.numberCell; i++) {
+        var itemDiv = `<div class="item-grid" id="item-grid-${i + 1}"></div>`
+        domConstruct.place(itemDiv, divWrapper, i);
+      }
+      domConstruct.place(divWrapper, "map_layers", "after");
 
+      //Tắt sự kiện map
+      this._disableEventsOnMap();
+
+      //Ẩn các widget trên màn hình 
+      this._visibilityWidgetsOnMap("none");
+
+      var ctrlIsPressed;
+      var currentExtent;
+      var listCoordinates;
+
+      //Khi đè phím
+      this.own(on(document, "keydown", lang.hitch(this, function (event) {
+        //Ctrl
+        if (event.keyCode == keys.copyKey) {
+          ctrlIsPressed = true;
+          //Dựa vào tọa độ map view hiện tại để lấy 15 tọa độ ô trên map
+          currentExtent = this.map.geographicExtent;
+          listCoordinates = common._getListCoordinates(currentExtent.xmin, currentExtent.ymin, currentExtent.xmax, currentExtent.ymax);
+        }
+      })));
+
+      //Khi nhả Ctrl
+      this.own(on(document, "keyup", lang.hitch(this, function (event) {
+        //Nếu nhả Ctrl và mảng data tọa độ đã có giá trị
+        if (event.keyCode == keys.copyKey && common.objItems.length !== 0) {
+          ctrlIsPressed = false;
+          var x_val = [];
+          var y_val = [];
+
+          //Lấy các tọa độ trong mảng data tọa độ
+          common.objItems.forEach(function (item) {
+            x_val.push(item.coordinates.xmin);
+            x_val.push(item.coordinates.xmax);
+            y_val.push(item.coordinates.ymin);
+            y_val.push(item.coordinates.ymax);
+          });
+
+          //Lấy các tọa độ min,max
+          var extentGeo = new esri.geometry.Extent();
+          extentGeo.xmin = x_val.sort()[0];
+          extentGeo.ymin = y_val.sort()[0];
+          extentGeo.xmax = x_val.sort()[x_val.length - 1];
+          extentGeo.ymax = y_val.sort()[y_val.length - 1];
+
+          //Zoom
+          this.map.setExtent(extentGeo, false).then(lang.hitch(this, function () {
+            this.print();
+          }));
+
+          // Refresh object data
+          common.objItems = [];
+          // Xóa grid layout
+          domConstruct.destroy("wrapper-grid")
+          // Hiển thị lại các widgets on screen
+          this._visibilityWidgetsOnMap("block");
+          //Bật sự kiện map
+          this._enableEventsOnMap();
+        }
+      })));
+
+      //Khi Click vào các ô item
+      this.own(query(".item-grid").on("click", lang.hitch(this, function (event) {
+        //Lấy id của item được click
+        var indexItem = event.target.id.split("item-grid-")[1] - 1;
+        // Nếu đang đè Ctrl
+        if (ctrlIsPressed) {
+          // Call đến _onClickMultiple để xử lý tạo data tọa độ các item được chọn
+          this._onClickMultiple(event.target, indexItem, listCoordinates);
+        } else { //Chọn single item
+          // Dựa vào tọa độ map view hiện tại để lấy 15 tọa độ ô trên map
+          currentExtent = this.map.geographicExtent;
+          listCoordinates = common._getListCoordinates(currentExtent.xmin, currentExtent.ymin, currentExtent.xmax, currentExtent.ymax);
+          // Call đến _onClickSingle để zoom vào item đã click, zoom xong mới thực hiện In
+          this._onClickSingle(indexItem, listCoordinates).then(lang.hitch(this, function () {
+            this.print();
+          }));;
+
+          // Xóa grid layout
+          domConstruct.destroy("wrapper-grid")
+          // Hiển thị lại các widgets on screen
+          this._visibilityWidgetsOnMap("block");
+          //Bật sự kiện map
+          this._enableEventsOnMap();
+        }
+      })));
+    },
+
+    //Disable events trên map
+    _disableEventsOnMap: function () {
+      this.map.disableClickRecenter();
+      this.map.disableDoubleClickZoom();
+      this.map.disableKeyboardNavigation();
+      this.map.disableMapNavigation();
+      this.map.disablePan();
+      this.map.disablePinchZoom();
+      this.map.disableRubberBandZoom();
+      this.map.disableScrollWheel();
+      this.map.disableScrollWheelZoom();
+      this.map.disableShiftDoubleClickZoom();
+      this.map.setInfoWindowOnClick(false);
+    },
+
+    //Enable events trên map
+    _enableEventsOnMap: function () {
+      this.map.enableClickRecenter();
+      this.map.enableDoubleClickZoom();
+      this.map.enableKeyboardNavigation();
+      this.map.enableMapNavigation();
+      this.map.enablePan();
+      this.map.enablePinchZoom();
+      this.map.enableRubberBandZoom();
+      this.map.enableScrollWheel();
+      this.map.enableScrollWheelZoom();
+      this.map.enableShiftDoubleClickZoom();
+      this.map.setInfoWindowOnClick(true);
+    },
+
+    //Zoom vào ô đã click
+    _onClickSingle: function (indexItem, listCoordinates) {
       var extentGeo = new esri.geometry.Extent();
+      extentGeo.xmin = listCoordinates[indexItem].xmin;
+      extentGeo.ymin = listCoordinates[indexItem].ymin;
+      extentGeo.xmax = listCoordinates[indexItem].xmax;
+      extentGeo.ymax = listCoordinates[indexItem].ymax;
+      //Zoom
+      return this.map.setExtent(extentGeo, true);
+    },
 
-      extentGeo.xmin = listCoordinates[index].xmin;
-      extentGeo.ymin = listCoordinates[index].ymin;
-      extentGeo.xmax = listCoordinates[index].xmax;
-      extentGeo.ymax = listCoordinates[index].ymax;
+    //Chọn nhiều item bằng ctrl
+    _onClickMultiple: function (nodeItem, indexItem, listCoordinates) {
+      var selectedItem = false;
+      //Check item có phải đã được chọn trước đó rồi không?
+      for (let i = 0; i < common.objItems.length; i++) {
+        if (common.objItems[i].indexItem == indexItem) {
+          selectedItem = true;
+          // Set lại màu cũ cho item
+          domStyle.set(nodeItem, "background", "blue");
+          domStyle.set(nodeItem, "opacity", "0.2");
+          //Xóa item này khỏi mảng data tọa độ
+          common.objItems.splice(i, 1);
+          break;
+        }
+      }
 
-      console.log("Lấy tọa độ div hiện tại");
-      console.log(extentGeo);
+      //Nếu item chưa được chọn trước đó
+      if (!selectedItem) {
+        // Set màu cho item được chọn
+        domStyle.set(nodeItem, "background", "yellow");
+        domStyle.set(nodeItem, "opacity", "1");
 
-      this.map.setExtent(extentGeo, true);
+        //Tạo obj item
+        var objItem = {
+          indexItem: indexItem,
+          coordinates: {}
+        }
+        objItem.coordinates.xmin = listCoordinates[indexItem].xmin;
+        objItem.coordinates.ymin = listCoordinates[indexItem].ymin;
+        objItem.coordinates.xmax = listCoordinates[indexItem].xmax;
+        objItem.coordinates.ymax = listCoordinates[indexItem].ymax;
+
+        //Add item này vào mảng data tọa độ
+        common.objItems.push(objItem);
+      }
+    },
+
+    //Ẩn/hiện các widgets on screen
+    _visibilityWidgetsOnMap: function (displayVal) {
+      query("#map").children().forEach(function (node) {
+        if (node.id !== "map_root") {
+          domStyle.set(node.id, "display", displayVal);
+        }
+      });
     },
 
     _onOutputSRChange: function (newValue) {
@@ -679,6 +840,15 @@ define([
       }
     },
 
+    //Click Button Print
+    beforePrint: function () {
+      if (this.printSettingsFormDijit.isValid()) {
+        this._printWithGridLayout();
+      } else {
+        this.printSettingsFormDijit.validate();
+      }
+    },
+
     print: function () {
       if (this.printSettingsFormDijit.isValid()) {
         var form = this.printSettingsFormDijit.get('value');
@@ -831,9 +1001,6 @@ define([
         window.open(this.url);
       }
     },
-
-    
-
   });
   return PrintDijit;
 });

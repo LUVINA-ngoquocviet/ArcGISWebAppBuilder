@@ -10,6 +10,8 @@ var kengen_shubetsu = {
   shiten: "30",
 };
 
+
+
 define(["libs/md5/md5"], function (md5) {
   var clazz = {};
 
@@ -98,6 +100,10 @@ define(["libs/md5/md5"], function (md5) {
     return "";
   };
 
+  clazz.numberCell = 15;
+  clazz.arrItems = [];
+  clazz.objItems = [];
+
   clazz._getListCoordinates = function (x_min, y_min, x_max, y_max) {
     const x_cell = 5;
     const y_cell = 3;
@@ -106,131 +112,40 @@ define(["libs/md5/md5"], function (md5) {
 
     var listCoordinates = [];
 
-    var A1 = {
-      xmin: x_min,
-      ymin: y_max - stepY * 1,
+    for (let i = 0; i < y_cell; i++) {
+      for (let j = 0; j < x_cell; j++) {
+        var tempPoint = {};
+        tempPoint.xmin = x_min + stepX * j;
+        tempPoint.ymin = y_max - stepY * (i + 1);
+        tempPoint.xmax = x_min + stepX * (j + 1);
+        tempPoint.ymax = y_max - stepY * i;
+        listCoordinates.push(tempPoint);
+      }
+    }
 
-      xmax: x_min + stepX * 1,
-      ymax: y_max
-    };
-    var A2 = {
-      xmin: x_min + stepX * 1,
-      ymin: y_max - stepY * 1,
+    return listCoordinates;
+  };
 
-      xmax: x_min + stepX * 2,
-      ymax: y_max
-    };
-    var A3 = {
-      xmin: x_min + stepX * 2,
-      ymin: y_max - stepY * 1,
+  clazz._getCoordinatesMulti = function (x_min, y_min, x_max, y_max) {
+    const x_cell = 5;
+    const y_cell = 3;
+    const stepX = (x_max - x_min) / x_cell;
+    const stepY = (y_max - y_min) / y_cell; 
 
-      xmax: x_min + stepX * 3,
-      ymax: y_max
-    };
-    var A4 = {
-      xmin: x_min + stepX * 3,
-      ymin: y_max - stepY * 1,
+    
 
-      xmax: x_min + stepX * 4,
-      ymax: y_max
-    };
-    var A5 = {
-      xmin: x_min + stepX * 4,
-      ymin: y_max - stepY * 1,
+    var listCoordinates = [];
 
-      xmax: x_min + stepX * 5,
-      ymax: y_max
-    };
-    //////////////////////////////////////////////////////////////
-
-    var A6 = {
-      xmin: x_min,
-      ymin: y_max - stepY * 2,
-
-      xmax: x_min + stepX * 1,
-      ymax: y_max - stepY * 1
-    };
-    var A7 = {
-      xmin: x_min + stepX * 1,
-      ymin: y_max - stepY * 2,
-
-      xmax: x_min + stepX * 2,
-      ymax: y_max - stepY * 1
-    };
-    var A8 = {
-      xmin: x_min + stepX * 2,
-      ymin: y_max - stepY * 2,
-
-      xmax: x_min + stepX * 3,
-      ymax: y_max - stepY * 1
-    };
-    var A9 = {
-      xmin: x_min + stepX * 3,
-      ymin: y_max - stepY * 2,
-
-      xmax: x_min + stepX * 4,
-      ymax: y_max - stepY * 1
-    };
-    var A10 = {
-      xmin: x_min + stepX * 4,
-      ymin: y_max - stepY * 2,
-
-      xmax: x_min + stepX * 5,
-      ymax: y_max - stepY * 1
-    };
-    //////////////////////////////////////////////////////////////
-
-    var A11 = {
-      xmin: x_min,
-      ymin: y_max - stepY * 3,
-
-      xmax: x_min + stepX * 1,
-      ymax: y_max - stepY * 2
-    };
-    var A12 = {
-      xmin: x_min + stepX * 1,
-      ymin: y_max - stepY * 3,
-
-      xmax: x_min + stepX * 2,
-      ymax: y_max - stepY * 2
-    };
-    var A13 = {
-      xmin: x_min + stepX * 2,
-      ymin: y_max - stepY * 3,
-
-      xmax: x_min + stepX * 3,
-      ymax: y_max - stepY * 2
-    };
-    var A14 = {
-      xmin: x_min + stepX * 3,
-      ymin: y_max - stepY * 3,
-
-      xmax: x_min + stepX * 4,
-      ymax: y_max - stepY * 2
-    };
-    var A15 = {
-      xmin: x_min + stepX * 4,
-      ymin: y_max - stepY * 3,
-
-      xmax: x_min + stepX * 5,
-      ymax: y_max - stepY * 2
-    };
-
-    listCoordinates.push(A1);
-    listCoordinates.push(A2);
-    listCoordinates.push(A3);
-    listCoordinates.push(A4);
-    listCoordinates.push(A5);
-    listCoordinates.push(A6);
-    listCoordinates.push(A7);
-    listCoordinates.push(A8);
-    listCoordinates.push(A9);
-    listCoordinates.push(A10);
-    listCoordinates.push(A11);
-    listCoordinates.push(A12);
-    listCoordinates.push(A13);
-    listCoordinates.push(A14);
-    listCoordinates.push(A15);
+    for (let i = 0; i < y_cell; i++) {
+      for (let j = 0; j < x_cell; j++) {
+        var tempPoint = {};
+        tempPoint.xmin = x_min + stepX * j;
+        tempPoint.ymin = y_max - stepY * (i + 1);
+        tempPoint.xmax = x_min + stepX * (j + 1);
+        tempPoint.ymax = y_max - stepY * i;
+        listCoordinates.push(tempPoint);
+      }
+    }
 
     return listCoordinates;
   };

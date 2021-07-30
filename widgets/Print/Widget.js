@@ -38,6 +38,7 @@ define([
       _portalPrintTaskURL: null,
 
       postCreate: function() {
+        console.log("postCreate");
         this.inherited(arguments);
 
         this.shelter = new LoadingIndicator({
@@ -48,12 +49,14 @@ define([
       },
 
       startup: function() {
+        console.log("startup");
         this.inherited(arguments);
         this.shelter.show();
         this._initPrinter();
       },
 
       destroy: function() {
+        console.log("destroy");
         if (this.print) {
           this.print.closeSettings();
         }
@@ -61,12 +64,14 @@ define([
       },
 
       onClose: function(){
+        console.log("onClose");
         if (this.print) {
           this.print.closeSettings();
         }
       },
 
       _initPrinter: function() {
+        console.log("_initPrinter");
         this._getPrintTaskURL(this.appConfig.portalUrl)
           .then(lang.hitch(this, function(printServiceUrl) {
             this.shelter.show();

@@ -99,7 +99,7 @@
     height: 100%;
     position: absolute;
     z-index: 9;
-    opacity: 0.3;
+    opacity: 0.2;
 
     text-align: center;
 
@@ -113,8 +113,8 @@
 }
 
 div[class*="item-grid"]:hover {  
-  opacity: 0.5;
-  background: yellow;
+  opacity: 1;
+  background: white;
 }
 
 div[class*="item-grid"]{
