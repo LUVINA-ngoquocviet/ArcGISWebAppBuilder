@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <style>
+        *,
+        *::before,
+        ::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .grid img {
+            display: block;
+        }
+
+        .grid {
+            display: inline-block;
+            position: relative;
+            margin: 10px;
+            vertical-align: top;
+        }
+
+        .grid::before,
+        .grid::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #000 2px, transparent 2px);
+            background-size: 10%;
+        }
+
+        .grid::before {
+            background-color: rgba(255, 0, 0, 0.56);
+            box-shadow: inset 0px 0px 0 2px #000;
+        }
+
+        .grid::after {
+            transform: rotate(90deg);
+        }
+
+        .fixed::before,
+        .fixed::after {
+            background-size: 23px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid">
+        <img src="https://dummyimage.com/300x300/ccc" width="750" height="750" />
+    </div>
+</body>

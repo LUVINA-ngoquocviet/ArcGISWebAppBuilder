@@ -1,0 +1,19 @@
+{
+  "name": "ToggleLegend",
+  "type": "widget",
+  "platform": "HTML",
+  "version": "2.20",
+  "wabVersion": "2.20",
+  "author": "NamLH",
+  "description": "This is the widget used to develop AMS Prototype",
+  "copyright": "Copyright © 2021 Luvina. All Rights Reserved.",
+  "license": "http://www.apache.org/licenses/LICENSE-2.0",
+  "properties": {
+    "inPanel": false,
+    "hasConfig": true,
+    "hasStyle": true,
+    "hasLocale": true,
+    "hasUIFile": true,
+    "hasSettingPage": false
+  }
+}

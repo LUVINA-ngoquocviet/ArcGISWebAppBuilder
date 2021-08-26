@@ -241,6 +241,19 @@
       },
       {
         "position": {
+          "right": 100,
+          "top": 70,
+          "relativeTo": "map"
+        },
+        "placeholderIndex": 1,
+        "id": "_44",
+        "name": "ToggleLegend",
+        "version": "2.20",
+        "uri": "widgets/ToggleLegend/Widget",
+        "config": "configs/ToggleLegend/config_widgets_toggle_legend.json"
+      },
+      {
+        "position": {
           "left": 230,
           "top": 10,
           "relativeTo": "map"

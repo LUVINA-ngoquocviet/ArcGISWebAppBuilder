@@ -1,0 +1,28 @@
+.dijitSelect {
+  margin: 3px;
+}
+.jimu-widget-search-selectbox {
+  min-height: 32px;
+  background: white;
+  padding: 5px !important;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.customlegend {
+  background-color: #EEEEEE;
+  border-style: solid;
+}
+
+/* .esriLegendLayerLabel{
+  font-family:'Monotype Corsiva';
+  color:red;
+}
+.esriLegendServiceLabel{
+  font-family: 'Times New Roman';
+  color:green;
+}
+.esriLegendService{
+  color:orange;
+  font-weight:bold;
+} */
