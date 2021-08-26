@@ -7,7 +7,8 @@ define([
   "dojo/_base/lang",
   "dojo/dom-construct",
   "dojo/dom",
-  'dojo/dom-style'
+  'dojo/dom-style',
+  "dojo/domReady!"
 ], function (
   declare,
   html,
@@ -38,6 +39,7 @@ define([
       this.inherited(arguments);
       on(dom.byId("toggle-legend"), "click", function () {
         this.visible = !this.visible;
+        dojo.byId("toggle-legend").innerHTML = this.visible ? "Show Legend" : "Hide Legend";
         domStyle.set(dom.byId("_37"), "display", this.visible ? "none" : "block");
       });
     },
