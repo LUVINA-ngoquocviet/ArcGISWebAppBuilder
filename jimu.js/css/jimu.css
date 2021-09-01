@@ -6630,7 +6630,7 @@ body:not(.ie-gte-10) .jimu-dijit-statistics-chart{
 }
 
 .jimu-rtl .jimu-dijit-gridlayout .lm_item_container .lm_dragmask .lm_drag_handler {
-  right: auto;
+  right: 0;
   left: 0;
 }
 

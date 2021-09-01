@@ -6,11 +6,70 @@
       <div class="seperator"></div>
       <div class="tool-section">
         <div class="jimu-float-leading label">${nls.layer}</div>
-        <div class="jimu-float-trailing setting feature-action icon-operation" data-dojo-attach-point="settingNode"></div>
+        <div class="jimu-float-trailing setting feature-action icon-operation" data-dojo-attach-point="settingNode">
+        </div>
       </div>
     </div>
-    <div class="layer-nodes" >
+    <div class="layer-nodes">
       <div class="layer-items" data-dojo-attach-point="layerItemsNode"></div>
+      <!-- BEGIN INFROGRAPHIC -->
+      <div class="inforgraphic">
+        <div class="lm_item lm_stack">
+          <!-- Header title -->
+          <div class="lm_header" style="height: 20px;">
+            <ul class="lm_tabs">
+              <li class="lm_tab lm_active" title="選択個数"><i class="lm_left"></i><span class="lm_title">選択個数</span>
+                <div class="lm_close_tab" style="display: block;"></div><i class="lm_right"></i>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Item data -->
+          <div class="lm_items" style="height: 155px;">
+            <div class="lm_item_container">
+              <div class="lm_content" style="height: 155px;">
+                <div class="jimu-widget-frame jimu-container">
+                  <div style="width: 100%;height: 100%;"
+                    class="jimu-widget-infographic jimu-widget firstFocusNode lastFocusNode" aria-label=" "
+                    data-widget-name="Infographic" tabindex="0">
+                    <div data-dojo-attach-point="setting" style="width: 100%;height: 16px;"></div>
+                    <div data-dojo-attach-point="container" style="width: 100%;height: calc(100% - 16px)">
+                      <div class="lm_goldenlayout lm_item lm_root viewonly jimu-dijit-gridlayout"
+                        style="height: 114px;">
+                        <div class="lm_item lm_stack" style=" height: 114px;">
+                          <div class="lm_items" style=" height: 114px;">
+                            <div class="lm_item_container" style=" height: 114px; display: block;">
+                              <div class="lm_content" style=" height: 114px;">
+                                <div tabindex="0" class="infographic-number-dijit horizontal-center vertical-middle"
+                                  role="link" style="height: 100%; width: 100%; background-color: rgb(192, 192, 192);">
+                                  <a tabindex="-1" data-dojo-attach-point="numberContent" class="number-content no-trim"
+                                    target="_blank">
+                                    <div data-dojo-attach-point="leftIcon" class="icon"></div>
+                                    <div data-dojo-attach-point="number" class="number"
+                                      style="font-weight: normal; font-style: normal; text-decoration: none; font-family: Arial; color: rgb(40, 40, 40); font-size: 24px;">
+                                      <div data-dojo-attach-point="prefix" class="prefix"></div>
+                                      <div class="value-content" data-dojo-attach-point="valueContent" id="dataInforgraphicTarget">97</div>
+                                      <div data-dojo-attach-point="suffix" class="suffix">個</div>
+                                    </div>
+                                    <div data-dojo-attach-point="rightIcon" class="icon"></div>
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div data-dojo-attach-point="shelter" class="loading hide"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END INFROGRAPHIC -->
     </div>
   </div>
   <div class="details-node" data-dojo-attach-point="detailsNode">
@@ -25,4 +84,5 @@
     </div>
   </div>
   <div data-dojo-attach-point="shelter" data-dojo-type="jimu/dijit/LoadingShelter" data-dojo-props='hidden:true'></div>
+
 </div>

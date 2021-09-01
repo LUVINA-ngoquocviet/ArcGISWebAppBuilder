@@ -22,9 +22,11 @@ define([
   'jimu/utils',
   '../utils',
   './clientStatistic',
-  './styleUtils'
-], function(declare, BaseDijit, domStyle, html, jimuUtils,
-  utils, clientStatistic, styleUtils) {
+  './styleUtils',
+  'dojo/dom',
+  'dojo/query'
+], function (declare, BaseDijit, domStyle, html, jimuUtils,
+  utils, clientStatistic, styleUtils, dom, query) {
   var clazz = declare([BaseDijit], {
     templateString: '<div tabindex="0" class="has-link" role="link" style="height:100%;width:100%;">' +
       '<div data-dojo-attach-point="noDataDiv"' +
@@ -33,7 +35,7 @@ define([
       '<div data-dojo-attach-point="leftIcon" class="icon"></div>' +
       '<div data-dojo-attach-point="number" class="number">' +
       '<div data-dojo-attach-point="prefix" class="prefix"></div>' +
-      '<div class="value-content" data-dojo-attach-point="valueContent"></div>' +
+      '<div class="value-content" data-dojo-attach-point="valueContent" id="dataInforgraphic"></div>' +
       '<div data-dojo-attach-point="suffix" class="suffix"></div></div>' +
       '<div data-dojo-attach-point="rightIcon" class="icon"></div>' +
       '</a></div>',
@@ -53,11 +55,11 @@ define([
     //    placement:'left'
     //  }}]
 
-    constructor: function(options) {
+    constructor: function (options) {
       this.visible = options.visible;
     },
 
-    postCreate: function() {
+    postCreate: function () {
       this.inherited(arguments);
       this._features = null;
       this._value = null;
@@ -66,7 +68,7 @@ define([
       this._updateBackGroundColor();
     },
 
-    _upgradeConfig: function(config) {
+    _upgradeConfig: function (config) {
       var dataFormat = config && config.dataFormat;
       if (!dataFormat) {
         return;
@@ -76,20 +78,20 @@ define([
       }
     },
 
-    setLayerInfo: function() {},
+    setLayerInfo: function () { },
 
-    setVisible: function(visible) {
+    setVisible: function (visible) {
       this.visible = visible;
     },
 
-    resetData: function() {
+    resetData: function () {
       this.dataSource = null;
       this._features = null;
       this._value = null;
       this.numberValue = null;
     },
 
-    onDataSourceDataUpdate: function(value) {
+    onDataSourceDataUpdate: function (value) {
       if (this.inSettingPage) {
         if (value && typeof value.features !== 'undefined') {
           this._features = utils.cleanFeatures(value.features);
@@ -99,18 +101,18 @@ define([
       }
     },
 
-    setDataSource: function(dataSource) {
+    setDataSource: function (dataSource) {
       this.inherited(arguments);
       this.dataSource = dataSource;
     },
 
-    setConfig: function(config) {
+    setConfig: function (config) {
       if (config) {
         this.config = config;
       }
     },
 
-    startRendering: function() {
+    startRendering: function () {
       if (!this._shouldRenderNumber()) {
         return;
       }
@@ -123,11 +125,12 @@ define([
         this.showNodata();
         return;
       }
+
       this._renderNumber(this.numberValue);
     },
 
     //setp 1, calculate gauge value
-    _calculateNumberValue: function() {
+    _calculateNumberValue: function () {
       var value;
       if (this.inSettingPage) {
         var statistic = utils.getStatisticForNumber(this.config);
@@ -142,15 +145,28 @@ define([
       }
     },
 
-    _renderNumber: function(value) {
+    _renderNumber: function (value) {
       this._cleanNumberContent();
       //init value
       this.valueContent.innerHTML = jimuUtils.localizeNumber(value);
 
       this._setValueDisplay();
+
+      this.hookDataInfographic();
+
     },
 
-    _setValueDisplay: function() {
+    hookDataInfographic: function () {
+      //Hide infographic
+      query("#widgets_Infographic_Widget_42_panel").parents(".lm_item.lm_stack").style("display", "none");
+      query("#widgets_Infographic_Widget_42_panel").parents(".lm_item.lm_stack").prev().style("display", "none");
+      // hook data into select
+      if (dom.byId('dataInforgraphicTarget')) {
+        dom.byId('dataInforgraphicTarget').innerHTML = this.valueContent.innerHTML;
+      }
+    },
+
+    _setValueDisplay: function () {
       var config = this.config;
       if (!config) {
         return;
@@ -166,7 +182,7 @@ define([
     },
 
     //------------tools----------------
-    _shouldRenderNumber: function() {
+    _shouldRenderNumber: function () {
       if (!this.visible) {
         return;
       }
@@ -188,7 +204,7 @@ define([
       return !!basicRequire;
     },
 
-    _getIndicatorColor: function() {
+    _getIndicatorColor: function () {
       var color = false;
       var icon = false;
       var indicators = this.config.indicators;
@@ -207,7 +223,7 @@ define([
       };
     },
 
-    _cleanNumberContent: function() {
+    _cleanNumberContent: function () {
       html.removeClass(this.leftIcon);
       html.addClass(this.leftIcon, ['icon']);
       html.removeClass(this.rightIcon);
@@ -222,7 +238,7 @@ define([
       this._setValueColor('');
     },
 
-    _updateBackGroundColor: function() {
+    _updateBackGroundColor: function () {
       var config = this.config;
       var bgColor = config && config.background && config.background.backgroundColor;
       if (bgColor) {
@@ -230,7 +246,7 @@ define([
       }
     },
 
-    _setBackground: function(config) {
+    _setBackground: function (config) {
       var background = config && config.background;
       if (!background) {
         return;
@@ -260,16 +276,16 @@ define([
       }
     },
 
-    _setFont: function(config) {
+    _setFont: function (config) {
       if (!config || !config.font) {
         return;
       }
-      var style = {};
+      var style = { };
       styleUtils.font.setStyle(config.font, style);
       html.setStyle(this.number, style);
     },
 
-    _setDataFormat: function(config) {
+    _setDataFormat: function (config) {
       var value, unit = '',
         decimalPlaces, digitSeparator;
       value = this.numberValue;
@@ -322,7 +338,7 @@ define([
       }
     },
 
-    _setIndicatorStyle: function() {
+    _setIndicatorStyle: function () {
       var indicatorInfo = this._getIndicatorColor();
       //set value color
       if (indicatorInfo.color) {
@@ -334,11 +350,11 @@ define([
       }
     },
 
-    _setValueColor: function(color) {
+    _setValueColor: function (color) {
       domStyle.set(this.number, "color", color);
     },
 
-    _setIndicatorIcon: function(iconInfo) {
+    _setIndicatorIcon: function (iconInfo) {
       if (!iconInfo) {
         return;
       }
@@ -349,7 +365,7 @@ define([
       }
     },
 
-    _setReplaceIcon: function(iconInfo) {
+    _setReplaceIcon: function (iconInfo) {
       var iconDom = html.create('div', {
         'class': 'indicator-icon ' + iconInfo.icon
       });
@@ -359,7 +375,7 @@ define([
       domStyle.set(iconDom, 'display', 'inline-flex');
     },
 
-    _setLeftRightIcon: function(iconInfo) {
+    _setLeftRightIcon: function (iconInfo) {
       var iconDom;
       if (iconInfo.placement === 'left') {
         iconDom = this.leftIcon;
@@ -371,7 +387,7 @@ define([
       domStyle.set(iconDom, 'color', iconInfo.color);
     },
 
-    showNodata: function(message) {
+    showNodata: function (message) {
       this._cleanNumberContent();
       html.addClass(this.domNode, 'no-data');
       if (message) {
@@ -379,7 +395,7 @@ define([
       }
     },
 
-    hideNodata: function() {
+    hideNodata: function () {
       html.removeClass(this.domNode, 'no-data');
     }
 

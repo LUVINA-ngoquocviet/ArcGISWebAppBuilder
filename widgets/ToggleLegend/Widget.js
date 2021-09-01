@@ -23,7 +23,7 @@ define([
   return declare([BaseWidget], {
     name: "ToggleLegend",
     baseClass: "ToggleLegend",
-    visible: true,
+    visibleLegend: true,
 
     _jimuLayerInfos: null,
 
@@ -38,9 +38,9 @@ define([
     startup: function () {
       this.inherited(arguments);
       on(dom.byId("toggle-legend"), "click", function () {
-        this.visible = !this.visible;
-        dojo.byId("toggle-legend").innerHTML = this.visible ? "Show Legend" : "Hide Legend";
-        domStyle.set(dom.byId("_37"), "display", this.visible ? "none" : "block");
+        this.visibleLegend = !this.visibleLegend;
+        dojo.byId("toggle-legend").innerHTML = this.visibleLegend ? "Show Legend" : "Hide Legend";
+        domStyle.set(dom.byId("_37"), "display", this.visibleLegend ? "none" : "block");
       });
     },
   });
