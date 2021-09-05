@@ -110,7 +110,7 @@ define(["libs/md5/md5"], function (md5) {
     const stepX = (x_max - x_min) / x_cell;
     const stepY = (y_max - y_min) / y_cell;
 
-    var listCoordinates = [];
+    const listCoordinates = [];
 
     for (let i = 0; i < y_cell; i++) {
       for (let j = 0; j < x_cell; j++) {
@@ -130,11 +130,9 @@ define(["libs/md5/md5"], function (md5) {
     const x_cell = 5;
     const y_cell = 3;
     const stepX = (x_max - x_min) / x_cell;
-    const stepY = (y_max - y_min) / y_cell; 
+    const stepY = (y_max - y_min) / y_cell;
 
-    
-
-    var listCoordinates = [];
+    const listCoordinates = [];
 
     for (let i = 0; i < y_cell; i++) {
       for (let j = 0; j < x_cell; j++) {
@@ -148,6 +146,28 @@ define(["libs/md5/md5"], function (md5) {
     }
 
     return listCoordinates;
+  };
+
+  // Lấy tọa độ lớn
+  clazz._getCoordinatesLarge = function (x_min, y_min, x_max, y_max) {
+    const x_cell = 5;
+    const y_cell = 3;
+
+    const xDistance = (x_cell - x_cell % 2) / 2;
+    const yDistance = (y_cell - y_cell % 2) / 2;
+
+    const stepX = x_max - x_min;
+    const stepY = y_max - y_min;
+
+    const coordinatesLarge = {};
+
+    coordinatesLarge.xmin = x_min - xDistance * stepX;
+    coordinatesLarge.ymin = y_min - yDistance * stepY;
+
+    coordinatesLarge.xmax = x_max + xDistance * stepX;
+    coordinatesLarge.ymax = y_max + yDistance * stepY;
+
+    return coordinatesLarge;
   };
 
   return clazz;

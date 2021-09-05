@@ -274,13 +274,27 @@ define([
         });
       }
 
+      //Thu nhỏ map
+      //Lấy tọa độ map hiện tại
+      let currentExtent = this.map.geographicExtent;
+      //Lấy tọa độ map sau khi thu nhỏ
+      const coordinatesLarge = common._getCoordinatesLarge(currentExtent.xmin, currentExtent.ymin, currentExtent.xmax, currentExtent.ymax);
+      //Khai báo đối tượng zoom
+      let extentGeo = new esri.geometry.Extent();
+      extentGeo.xmin = coordinatesLarge.xmin;
+      extentGeo.ymin = coordinatesLarge.ymin;
+      extentGeo.xmax = coordinatesLarge.xmax;
+      extentGeo.ymax = coordinatesLarge.ymax;
+      //Thu nhỏ map theo tọa độ đã lấy được
+      this.map.setExtent(extentGeo, false);
+
       //Tạo grid layout 
       if (dom.byId("wrapper-grid")) {
         domConstruct.destroy("wrapper-grid")
       }
-      var divWrapper = domConstruct.toDom(`<div id="wrapper-grid" class="wrapper-grid"</div>`);
+      const divWrapper = domConstruct.toDom(`<div id="wrapper-grid" class="wrapper-grid"</div>`);
       for (let i = 0; i < common.numberCell; i++) {
-        var itemDiv = `<div class="item-grid" id="item-grid-${i + 1}"></div>`
+        const itemDiv = `<div class="item-grid" id="item-grid-${i + 1}"></div>`
         domConstruct.place(itemDiv, divWrapper, i);
       }
       domConstruct.place(divWrapper, "map_layers", "after");
@@ -291,9 +305,8 @@ define([
       //Ẩn các widget trên màn hình 
       this._visibilityWidgetsOnMap("none");
 
-      var ctrlIsPressed;
-      var currentExtent;
-      var listCoordinates;
+      let ctrlIsPressed;
+      let listCoordinates;
 
       //Khi đè phím
       this.own(on(document, "keydown", lang.hitch(this, function (event) {
@@ -357,6 +370,7 @@ define([
           // Dựa vào tọa độ map view hiện tại để lấy 15 tọa độ ô trên map
           currentExtent = this.map.geographicExtent;
           listCoordinates = common._getListCoordinates(currentExtent.xmin, currentExtent.ymin, currentExtent.xmax, currentExtent.ymax);
+
           // Call đến _onClickSingle để zoom vào item đã click, zoom xong mới thực hiện In
           this._onClickSingle(indexItem, listCoordinates).then(lang.hitch(this, function () {
             this.print();
