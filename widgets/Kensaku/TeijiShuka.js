@@ -19,7 +19,8 @@ define([
 	"esri/layers/FeatureLayer",
 	"esri/tasks/query",
 	"widgets/common",
-	"dojo/text!./templates/TeijiShuka.html"
+	"dojo/text!./templates/TeijiShuka.html",
+  'jimu/LayerInfos/LayerInfos'
       ], function (
 	declare,
 	lang,
@@ -40,7 +41,8 @@ define([
 	FeatureLayer,
 	Query,
 	common,
-	template
+	template, 
+  LayerInfos
       ) {
 
 	return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
@@ -52,6 +54,9 @@ define([
 
     jigyosho: ["-", "-", "-", "-"],
     teishusaki_layer_id: "",
+
+    //  operational layer infos
+    operLayerInfos: null,
 
     postCreate: function () {
       this.inherited(arguments);
@@ -123,6 +128,19 @@ define([
           }
         }
         }));
+
+        LayerInfos.getInstance(this.map, this.map.itemInfo)
+            .then(lang.hitch(this, function(operLayerInfos) {
+              this.operLayerInfos = operLayerInfos;
+            }));
+
+        array.forEach(this.operLayerInfos.getLayerInfoArray(), function(layerInfo) {
+          if (layerInfo.isShowInMap() && layerInfo.title.includes("airport")) {
+            
+            // console.log(layerInfo.getScaleRange());
+            // layerInfo.setScaleRange(25000000, 0);
+          }
+        }, this);
     },
 
     _createSelect: function (self) {
