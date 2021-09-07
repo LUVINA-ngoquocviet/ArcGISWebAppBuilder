@@ -139,6 +139,12 @@ define([
 
     _currentTemplateInfo: null,
 
+    //  operational layer infos
+    operLayerInfos: null,
+
+    // list Default Scales
+    listDefaultScales: [],
+
     postCreate: function () {
       this.inherited(arguments);
       var printParams = {
@@ -288,6 +294,21 @@ define([
       //Thu nhỏ map theo tọa độ đã lấy được
       this.map.setExtent(extentGeo, false);
 
+      //Init LayerInfos
+      LayerInfos.getInstance(this.map, this.map.itemInfo)
+        .then(lang.hitch(this, function(operLayerInfos) {
+          this.operLayerInfos = operLayerInfos;
+        }));
+
+      array.forEach(this.operLayerInfos.getLayerInfoArray(), function(layerInfo) {
+        if (layerInfo.isShowInMap()) {
+          // add to listDefaultScales
+          this.listDefaultScales = [...this.listDefaultScales, layerInfo.getScaleRange().minScale];
+          // set scale on current view map
+          layerInfo.setScaleRange(this.map.getMinScale(), 0);
+        }
+      }, this);
+
       //Tạo grid layout 
       if (dom.byId("wrapper-grid")) {
         domConstruct.destroy("wrapper-grid")
@@ -380,6 +401,10 @@ define([
           domConstruct.destroy("wrapper-grid")
           // Hiển thị lại các widgets on screen
           this._visibilityWidgetsOnMap("block");
+
+          //Ngăn chặn sự kiện click hiện tại lan rộng tới thằng khác.
+          event.stopPropagation();
+
           //Bật sự kiện map
           this._enableEventsOnMap();
         }
@@ -925,7 +950,17 @@ define([
         if (srUtils.isValidWkid(outWkid) && outWkid !== this.map.spatialReference.wkid) {
           this.printparams.outSpatialReference = new SpatialReference(outWkid);
         }
-        var fileHandel = this.printTask.execute(this.printparams);
+        var fileHandel = this.printTask.execute(this.printparams,  lang.hitch(this, function() {
+          //Reset scale for layers
+          let countLayerShowInMap = 0;  //index in listDefaultScales
+
+          array.forEach(this.operLayerInfos.getLayerInfoArray(), function(layerInfo) {
+            if (layerInfo.isShowInMap()) {
+              layerInfo.setScaleRange(this.listDefaultScales[countLayerShowInMap], 0);
+              countLayerShowInMap++;
+            }
+          }, this);
+        }));
 
         var result = new printResultDijit({
           count: this.count.toString(),
@@ -940,6 +975,17 @@ define([
         this.count++;
       } else {
         this.printSettingsFormDijit.validate();
+      }
+
+      // minimised map
+      if (query(".lm_maximised").length !== 0) {
+        query(".no-tabs").children().forEach(function (node) {
+          if (domClass.contains(node, "lm_controls")) {
+            query(".lm_maximise", node).forEach(function (nodeChild) {
+              nodeChild.click();
+            });
+          }
+        });
       }
     },
 

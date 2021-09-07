@@ -37,12 +37,13 @@ define(['dojo/_base/declare',
   './layerUtil',
   './SelectableLayerItem',
   './FeatureItem',
+  'widgets/common',
   'jimu/dijit/LoadingShelter'
 ],
 function(declare, lang, html, array, on, all, _WidgetsInTemplateMixin, SimpleMarkerSymbol,
 SimpleLineSymbol, SimpleFillSymbol, SymbolJsonUtils, Color, BaseWidget, WidgetManager, ViewStack,
 FeatureSetChooserForMultipleLayers, LayerInfos, SelectionManager, PopupMenu, jimuUtils, layerUtil,
-SelectableLayerItem, FeatureItem) {
+SelectableLayerItem, FeatureItem, common) {
   return declare([BaseWidget, _WidgetsInTemplateMixin], {
     baseClass: 'jimu-widget-select',
 
@@ -137,6 +138,9 @@ SelectableLayerItem, FeatureItem) {
         var position = html.position(event.target);
         this.showPopup(position);
       })));
+
+      //get airport number
+      this.valueContent.innerHTML = common.airPortCount;
     },
 
     _getSelectedFeaturesOID: function (layer) {

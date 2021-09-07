@@ -24,9 +24,10 @@ define([
   './clientStatistic',
   './styleUtils',
   'dojo/dom',
-  'dojo/query'
+  'dojo/query',
+  '../../common',
 ], function (declare, BaseDijit, domStyle, html, jimuUtils,
-  utils, clientStatistic, styleUtils, dom, query) {
+  utils, clientStatistic, styleUtils, dom, query, common) {
   var clazz = declare([BaseDijit], {
     templateString: '<div tabindex="0" class="has-link" role="link" style="height:100%;width:100%;">' +
       '<div data-dojo-attach-point="noDataDiv"' +
@@ -149,6 +150,9 @@ define([
       this._cleanNumberContent();
       //init value
       this.valueContent.innerHTML = jimuUtils.localizeNumber(value);
+
+      //airport number
+      common.airPortCount = this.valueContent.innerHTML;
 
       this._setValueDisplay();
 

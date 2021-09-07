@@ -170,5 +170,8 @@ define(["libs/md5/md5"], function (md5) {
     return coordinatesLarge;
   };
 
+  //Infographic in Select
+  clazz.airPortCount = "5";
+
   return clazz;
 });
