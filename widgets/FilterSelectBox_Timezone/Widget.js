@@ -91,6 +91,10 @@ define([
           }
         })
       );
+      // MERGE kensaku
+      // this._initShuhaikuiki();
+      // this._initTeijiShuka();
+
     },
 
     _createSelect: function (self) {
