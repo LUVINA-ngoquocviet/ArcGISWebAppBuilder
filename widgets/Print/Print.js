@@ -63,8 +63,8 @@ define([
   'dojo/dom',
   'widgets/common',
   'jimu/WidgetManager',
-  'dojo/keys',
-  'dojo/NodeList-dom'
+  'dojo/keys'
+  // 'dojo/NodeList-dom'
 ], function (
   declare,
   _WidgetBase,
@@ -286,13 +286,13 @@ define([
       //Lấy tọa độ map sau khi thu nhỏ
       const coordinatesLarge = common._getCoordinatesLarge(currentExtent.xmin, currentExtent.ymin, currentExtent.xmax, currentExtent.ymax);
       //Khai báo đối tượng zoom
-      let extentGeo = new esri.geometry.Extent();
-      extentGeo.xmin = coordinatesLarge.xmin;
-      extentGeo.ymin = coordinatesLarge.ymin;
-      extentGeo.xmax = coordinatesLarge.xmax;
-      extentGeo.ymax = coordinatesLarge.ymax;
+      let extentGeoLarge = new esri.geometry.Extent();
+      extentGeoLarge.xmin = coordinatesLarge.xmin;
+      extentGeoLarge.ymin = coordinatesLarge.ymin;
+      extentGeoLarge.xmax = coordinatesLarge.xmax;
+      extentGeoLarge.ymax = coordinatesLarge.ymax;
       //Thu nhỏ map theo tọa độ đã lấy được
-      this.map.setExtent(extentGeo, false);
+      this.map.setExtent(extentGeoLarge, false);
 
       //Init LayerInfos
       LayerInfos.getInstance(this.map, this.map.itemInfo)
@@ -303,22 +303,11 @@ define([
       array.forEach(this.operLayerInfos.getLayerInfoArray(), function(layerInfo) {
         if (layerInfo.isShowInMap()) {
           // add to listDefaultScales
-          this.listDefaultScales = [...this.listDefaultScales, layerInfo.getScaleRange().minScale];
+          this.listDefaultScales.push(layerInfo.getScaleRange().minScale);
           // set scale on current view map
           layerInfo.setScaleRange(this.map.getMinScale(), 0);
         }
       }, this);
-
-      //Tạo grid layout 
-      if (dom.byId("wrapper-grid")) {
-        domConstruct.destroy("wrapper-grid")
-      }
-      const divWrapper = domConstruct.toDom(`<div id="wrapper-grid" class="wrapper-grid"</div>`);
-      for (let i = 0; i < common.numberCell; i++) {
-        const itemDiv = `<div class="item-grid" id="item-grid-${i + 1}"></div>`
-        domConstruct.place(itemDiv, divWrapper, i);
-      }
-      domConstruct.place(divWrapper, "map_layers", "after");
 
       //Tắt sự kiện map
       this._disableEventsOnMap();
@@ -326,89 +315,18 @@ define([
       //Ẩn các widget trên màn hình 
       this._visibilityWidgetsOnMap("none");
 
-      let ctrlIsPressed;
-      let listCoordinates;
+      this._onClickSingle(extentGeoLarge);
+      this._visibilityWidgetsOnMap("block");
 
-      //Khi đè phím
-      this.own(on(document, "keydown", lang.hitch(this, function (event) {
-        //Ctrl
-        if (event.keyCode == keys.copyKey) {
-          ctrlIsPressed = true;
-          //Dựa vào tọa độ map view hiện tại để lấy 15 tọa độ ô trên map
-          currentExtent = this.map.geographicExtent;
-          listCoordinates = common._getListCoordinates(currentExtent.xmin, currentExtent.ymin, currentExtent.xmax, currentExtent.ymax);
-        }
-      })));
+      // Ngăn chặn sự kiện click hiện tại lan rộng tới thằng khác.
+      event.stopPropagation();
 
-      //Khi nhả Ctrl
-      this.own(on(document, "keyup", lang.hitch(this, function (event) {
-        //Nếu nhả Ctrl và mảng data tọa độ đã có giá trị
-        if (event.keyCode == keys.copyKey && common.objItems.length !== 0) {
-          ctrlIsPressed = false;
-          var x_val = [];
-          var y_val = [];
-
-          //Lấy các tọa độ trong mảng data tọa độ
-          common.objItems.forEach(function (item) {
-            x_val.push(item.coordinates.xmin);
-            x_val.push(item.coordinates.xmax);
-            y_val.push(item.coordinates.ymin);
-            y_val.push(item.coordinates.ymax);
-          });
-
-          //Lấy các tọa độ min,max
-          var extentGeo = new esri.geometry.Extent();
-          extentGeo.xmin = x_val.sort()[0];
-          extentGeo.ymin = y_val.sort()[0];
-          extentGeo.xmax = x_val.sort()[x_val.length - 1];
-          extentGeo.ymax = y_val.sort()[y_val.length - 1];
-
-          //Zoom
-          this.map.setExtent(extentGeo, false).then(lang.hitch(this, function () {
-            this.print();
-          }));
-
-          // Refresh object data
-          common.objItems = [];
-          // Xóa grid layout
-          domConstruct.destroy("wrapper-grid")
-          // Hiển thị lại các widgets on screen
-          this._visibilityWidgetsOnMap("block");
-          //Bật sự kiện map
-          this._enableEventsOnMap();
-        }
-      })));
-
-      //Khi Click vào các ô item
-      this.own(query(".item-grid").on("click", lang.hitch(this, function (event) {
-        //Lấy id của item được click
-        var indexItem = event.target.id.split("item-grid-")[1] - 1;
-        // Nếu đang đè Ctrl
-        if (ctrlIsPressed) {
-          // Call đến _onClickMultiple để xử lý tạo data tọa độ các item được chọn
-          this._onClickMultiple(event.target, indexItem, listCoordinates);
-        } else { //Chọn single item
-          // Dựa vào tọa độ map view hiện tại để lấy 15 tọa độ ô trên map
-          currentExtent = this.map.geographicExtent;
-          listCoordinates = common._getListCoordinates(currentExtent.xmin, currentExtent.ymin, currentExtent.xmax, currentExtent.ymax);
-
-          // Call đến _onClickSingle để zoom vào item đã click, zoom xong mới thực hiện In
-          this._onClickSingle(indexItem, listCoordinates).then(lang.hitch(this, function () {
-            this.print();
-          }));;
-
-          // Xóa grid layout
-          domConstruct.destroy("wrapper-grid")
-          // Hiển thị lại các widgets on screen
-          this._visibilityWidgetsOnMap("block");
-
-          //Ngăn chặn sự kiện click hiện tại lan rộng tới thằng khác.
-          event.stopPropagation();
-
-          //Bật sự kiện map
-          this._enableEventsOnMap();
-        }
-      })));
+      //Bật sự kiện map
+      this._enableEventsOnMap();
+      setTimeout(function(){
+        this.map.setExtent(extentGeoLarge, false);
+      }, 6*5000);
+      
     },
 
     //Disable events trên map
@@ -442,14 +360,77 @@ define([
     },
 
     //Zoom vào ô đã click
-    _onClickSingle: function (indexItem, listCoordinates) {
+    _onClickSingle: function (extentGeoLarge) {
       var extentGeo = new esri.geometry.Extent();
-      extentGeo.xmin = listCoordinates[indexItem].xmin;
-      extentGeo.ymin = listCoordinates[indexItem].ymin;
-      extentGeo.xmax = listCoordinates[indexItem].xmax;
-      extentGeo.ymax = listCoordinates[indexItem].ymax;
+      extentGeo.xmin = extentGeoLarge.xmin;
+      extentGeo.ymin = extentGeoLarge.ymin;
+      extentGeo.xmax = extentGeoLarge.xmax;
+      extentGeo.ymax = extentGeoLarge.ymax;
+      // var extendCurrent = this.map.geographicExtent;
+      var self = this;
       //Zoom
-      return this.map.setExtent(extentGeo, true);
+      var coordinatesCenter = this.map.geographicExtent.getCenter();
+      var ArrayCoordinates = this._getArrayCoordinate(coordinatesCenter, extentGeo);
+
+      domConstruct.destroy("wrapper-grid");
+
+      for(let i = 0; i< ArrayCoordinates.length; i++) {
+        console.log(self.map);
+        let ai = i;
+        setTimeout(function() {
+          self._setExtentMap(ArrayCoordinates[ai], true).then(lang.hitch(this, function() {
+            self.print();
+          }));
+        }, 5000 * (i+1));
+        setTimeout(function () {
+          self._setExtentMap(extentGeoLarge);
+        }, 5000 * (ArrayCoordinates.length + 1));
+      }
+    },
+
+    _setExtentMap: function (Coordinate, fit) {
+      var extentGeo = new esri.geometry.Extent();
+      console.log(Coordinate);
+      extentGeo.xmin = Coordinate.xmin;
+      extentGeo.ymin = Coordinate.ymin;
+      extentGeo.xmax = Coordinate.xmax;
+      extentGeo.ymax = Coordinate.ymax;
+      // Zoom
+      return this.map.setExtent(extentGeo, fit);
+    },
+
+    _getArrayCoordinate: function(coordinatesCenter, extentGeo) {
+      var ArrayCoordinates = [];
+      var extendGeoNumOne = new esri.geometry.Extent();
+      extendGeoNumOne.xmin = extentGeo.xmin;
+      extendGeoNumOne.ymin = coordinatesCenter.y;
+      extendGeoNumOne.xmax = coordinatesCenter.x;
+      extendGeoNumOne.ymax = extentGeo.ymax;
+      ArrayCoordinates.push(extendGeoNumOne);
+      
+      var extendGeoNumTwo = new esri.geometry.Extent();
+      extendGeoNumTwo.xmin = coordinatesCenter.x;
+      extendGeoNumTwo.ymin = coordinatesCenter.y;
+      extendGeoNumTwo.xmax = extentGeo.xmax;
+      extendGeoNumTwo.ymax = extentGeo.ymax;
+      ArrayCoordinates.push(extendGeoNumTwo);
+
+      var extendGeoNumThree = new esri.geometry.Extent();
+      extendGeoNumThree.xmin = extentGeo.xmin;
+      extendGeoNumThree.ymin = extentGeo.ymin;
+      extendGeoNumThree.xmax = coordinatesCenter.x;
+      extendGeoNumThree.ymax = coordinatesCenter.y;
+      ArrayCoordinates.push(extendGeoNumThree);
+
+      var extendGeoNumFour = new esri.geometry.Extent();
+      extendGeoNumFour.xmin = coordinatesCenter.x;
+      extendGeoNumFour.ymin = extentGeo.ymin;
+      extendGeoNumFour.xmax = extentGeo.xmax;
+      extendGeoNumFour.ymax = coordinatesCenter.y
+      ArrayCoordinates.push(extendGeoNumFour);
+
+      return ArrayCoordinates;
+
     },
 
     //Chọn nhiều item bằng ctrl
@@ -922,8 +903,10 @@ define([
         var hasTitleText = lang.getObject('layoutOptions.hasTitleText', false, templateInfo);
 
         var template = new PrintTemplate();
-        template.format = form.format;
-        template.layout = form.layout;
+        // template.format = form.format;
+        // template.layout = form.layout;
+        template.format = "PDF";
+        template.layout = "A3 Landscape";
         template.preserveScale = (form.preserveScale === 'true' || form.preserveScale === 'force');
         if (form.preserveScale === 'force') {
           template.outScale = this.preserve.forcedScale > 0 ? this.preserve.forcedScale : this.map.getScale();
@@ -940,6 +923,12 @@ define([
           customTextElements: cteArray,
           scalebarUnit: this.layoutForm.scalebarUnit
         };
+        template.exportOptions = {
+          width: 1104,
+          height: 410
+        };
+        // template.format = "PDF";
+
         this.printparams.template = template;
         this.printparams.extraParameters = { // come from source code of jsapi
           printFlag: true
