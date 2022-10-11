@@ -923,10 +923,10 @@ define([
           customTextElements: cteArray,
           scalebarUnit: this.layoutForm.scalebarUnit
         };
-        template.exportOptions = {
-          width: 1104,
-          height: 410
-        };
+        // template.exportOptions = {
+        //   width: 1104,
+        //   height: 410
+        // };
         // template.format = "PDF";
 
         this.printparams.template = template;
@@ -1029,6 +1029,7 @@ define([
     },
     _onPrintComplete: function (data) {
       if (data.url) {
+        console.log(data.url);
         this.url = data.url;
         html.setStyle(this.progressBar.domNode, 'display', 'none');
         html.setStyle(this.successNode, 'display', 'inline-block');
